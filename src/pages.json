@@ -1,0 +1,82 @@
+{
+	"pages": [
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "台球计分",
+				"navigationBarBackgroundColor": "#ffffff",
+				"navigationBarTextStyle": "black",
+				"enablePullDownRefresh": false,
+				"backgroundTextStyle": "dark"
+			}
+		},
+		{
+			"path": "pages/nine-ball-mode/nine-ball-mode",
+			"style": {
+				"navigationBarTitleText": "九球模式选择",
+				"navigationBarBackgroundColor": "#ffffff",
+				"navigationBarTextStyle": "black",
+				"enablePullDownRefresh": false,
+				"backgroundTextStyle": "dark"
+			}
+		},
+		{
+			"path": "pages/room-setup/room-setup",
+			"style": {
+				"navigationBarTitleText": "房间设置",
+				"navigationBarBackgroundColor": "#ffffff",
+				"navigationBarTextStyle": "black",
+				"enablePullDownRefresh": false,
+				"backgroundTextStyle": "dark"
+			}
+		},
+		{
+			"path": "pages/eight-ball-game/eight-ball-game",
+			"style": {
+				"navigationBarTitleText": "中式八球",
+				"navigationBarBackgroundColor": "#ffffff",
+				"navigationBarTextStyle": "black",
+				"enablePullDownRefresh": false,
+				"backgroundTextStyle": "dark"
+			}
+		},
+		{
+			"path": "pages/nine-ball-2p/nine-ball-2p",
+			"style": {
+				"navigationBarTitleText": "九球二人追分",
+				"navigationBarBackgroundColor": "#ffffff",
+				"navigationBarTextStyle": "black",
+				"enablePullDownRefresh": false,
+				"backgroundTextStyle": "dark"
+			}
+		},
+		{
+			"path": "pages/nine-ball-3p/nine-ball-3p",
+			"style": {
+				"navigationBarTitleText": "九球三人追分",
+				"navigationBarBackgroundColor": "#ffffff",
+				"navigationBarTextStyle": "black",
+				"enablePullDownRefresh": false,
+				"backgroundTextStyle": "dark"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "台球计分",
+		"navigationBarBackgroundColor": "#ffffff",
+		"backgroundColor": "#667eea",
+		"enablePullDownRefresh": false,
+		"backgroundTextStyle": "dark",
+		"onReachBottomDistance": 50,
+		"pageOrientation": "portrait",
+		"app-plus": {
+			"animationType": "slide-in-right",
+			"animationDuration": 300
+		},
+		"mp-weixin": {
+			"navigationStyle": "default"
+		}
+	}
+
+}
