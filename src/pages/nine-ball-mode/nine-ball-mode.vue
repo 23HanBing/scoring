@@ -11,68 +11,68 @@
         <view class="skeleton-card"></view>
       </view>
     </view>
-    
+
     <!-- 实际内容 -->
     <view v-else class="content-wrapper">
       <!-- 背景 -->
       <view class="background"></view>
-      
+
       <!-- 标题 -->
       <view class="header">
         <text class="title">选择九球模式</text>
         <text class="subtitle">请选择参与人数</text>
       </view>
-    
-    <!-- 模式选择 -->
-    <view class="mode-container">
-      <view class="mode-card two-player" @tap="selectTwoPlayer">
-        <view class="card-icon">
-          <text class="player-number">2P</text>
+
+      <!-- 模式选择 -->
+      <view class="mode-container">
+        <view class="mode-card two-player" @tap="selectTwoPlayer">
+          <view class="card-icon">
+            <text class="player-number">2P</text>
+          </view>
+          <view class="card-content">
+            <text class="card-title">二人追分</text>
+            <text class="card-desc">零和游戏，总分恒为0\n大金+10，小金+7，普胜+4，犯规-1</text>
+          </view>
+          <view class="card-arrow">›</view>
         </view>
-        <view class="card-content">
-          <text class="card-title">二人追分</text>
-          <text class="card-desc">零和游戏，总分恒为0\n大金+10，小金+7，普胜+4，犯规-1</text>
-        </view>
-        <view class="card-arrow">›</view>
-      </view>
-      
-      <view class="mode-card three-player" @tap="selectThreePlayer">
-        <view class="card-icon">
-          <text class="player-number">3P</text>
-        </view>
-        <view class="card-content">
-          <text class="card-title">三人追分</text>
-          <text class="card-desc">三方零和，需选择对战双方\n赢方得分，败方失分，第三方不变</text>
-        </view>
-        <view class="card-arrow">›</view>
-      </view>
-    </view>
-    
-    <!-- 规则说明 -->
-    <view class="rules-section">
-      <view class="rules-header" @tap="toggleRules">
-        <text class="rules-title">规则说明</text>
-        <text class="rules-toggle">{{ showRules ? '▲' : '▼' }}</text>
-      </view>
-      <view class="rules-content" v-if="showRules">
-        <view class="rule-item">
-          <text class="rule-title">大金：</text>
-          <text class="rule-desc">开球有下球并一次清完，获得10分</text>
-        </view>
-        <view class="rule-item">
-          <text class="rule-title">小金：</text>
-          <text class="rule-desc">桌面上有一号球和九号球并依次清完，获得7分</text>
-        </view>
-        <view class="rule-item">
-          <text class="rule-title">普胜：</text>
-          <text class="rule-desc">正常打进九号球，获得4分</text>
-        </view>
-        <view class="rule-item">
-          <text class="rule-title">犯规：</text>
-          <text class="rule-desc">违规操作，扣除1分</text>
+
+        <view class="mode-card three-player" @tap="selectThreePlayer">
+          <view class="card-icon">
+            <text class="player-number">3P</text>
+          </view>
+          <view class="card-content">
+            <text class="card-title">三人追分</text>
+            <text class="card-desc">三方零和，需选择对战双方\n赢方得分，败方失分，第三方不变</text>
+          </view>
+          <view class="card-arrow">›</view>
         </view>
       </view>
-    </view>
+
+      <!-- 规则说明 -->
+      <view class="rules-section">
+        <view class="rules-header" @tap="toggleRules">
+          <text class="rules-title">规则说明</text>
+          <text class="rules-toggle">{{ showRules ? '▲' : '▼' }}</text>
+        </view>
+        <view class="rules-content" v-if="showRules">
+          <view class="rule-item">
+            <text class="rule-title">大金：</text>
+            <text class="rule-desc">开球有下球并一次清完，获得10分</text>
+          </view>
+          <view class="rule-item">
+            <text class="rule-title">小金：</text>
+            <text class="rule-desc">桌面上有一号球和九号球并依次清完，获得7分</text>
+          </view>
+          <view class="rule-item">
+            <text class="rule-title">普胜：</text>
+            <text class="rule-desc">正常打进九号球，获得4分</text>
+          </view>
+          <view class="rule-item">
+            <text class="rule-title">犯规：</text>
+            <text class="rule-desc">违规操作，扣除1分</text>
+          </view>
+        </view>
+      </view>
     </view>
   </view>
 </template>
@@ -112,6 +112,22 @@ export default {
     toggleRules() {
       this.showRules = !this.showRules
     }
+  },
+  // 转发给好友
+  onShareAppMessage(res) {
+    return {
+      title: '九球计分器 - 模式选择',
+      path: '/pages/nine-ball-mode/nine-ball-mode',
+      imageUrl: '/static/logo.png'
+    }
+  },
+  // 分享到朋友圈
+  onShareTimeline(res) {
+    return {
+      title: '九球计分器 - 模式选择',
+      query: 'from=timeline',
+      imageUrl: '/static/logo.png'
+    }
   }
 }
 </script>
@@ -132,7 +148,6 @@ export default {
   bottom: 0;
   z-index: 0;
 }
-
 
 
 .header {
@@ -173,7 +188,6 @@ export default {
   box-shadow: 0 3rpx 12rpx rgba(0, 0, 0, 0.15);
   position: relative;
 }
-
 
 
 .two-player {

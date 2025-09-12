@@ -59,6 +59,26 @@
 				"enablePullDownRefresh": false,
 				"backgroundTextStyle": "dark"
 			}
+		},
+		{
+			"path": "pages/snooker-mode/snooker-mode",
+			"style": {
+				"navigationBarTitleText": "斯诺克设置",
+				"navigationBarBackgroundColor": "#ffffff",
+				"navigationBarTextStyle": "black",
+				"enablePullDownRefresh": false,
+				"backgroundTextStyle": "dark"
+			}
+		},
+		{
+			"path": "pages/snooker-game/snooker-game",
+			"style": {
+				"navigationBarTitleText": "斯诺克对局",
+				"navigationBarBackgroundColor": "#ffffff",
+				"navigationBarTextStyle": "black",
+				"enablePullDownRefresh": false,
+				"backgroundTextStyle": "dark"
+			}
 		}
 	],
 	"globalStyle": {

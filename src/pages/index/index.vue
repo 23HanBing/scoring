@@ -23,7 +23,7 @@
         </view>
       </view>
     </view>
-    
+
     <!-- 实际内容 -->
     <view v-else class="content-container">
       <!-- 背景动画 -->
@@ -32,13 +32,13 @@
         <view class="ball ball-2"></view>
         <view class="ball ball-3"></view>
       </view>
-      
+
       <!-- 标题区域 -->
       <view class="header">
         <text class="main-title">台球计分</text>
         <text class="sub-title">专业计分，精准记录</text>
       </view>
-      
+
       <!-- 游戏模式选择 -->
       <view class="mode-container">
         <view class="mode-card eight-ball" @tap="selectEightBall">
@@ -51,7 +51,7 @@
           </view>
           <view class="card-arrow">›</view>
         </view>
-        
+
         <view class="mode-card nine-ball" @tap="selectNineBall">
           <view class="card-icon">
             <text class="ball-number">9</text>
@@ -62,8 +62,18 @@
           </view>
           <view class="card-arrow">›</view>
         </view>
+        <view class="mode-card snooker" @tap="selectSnooker">
+          <view class="card-icon">
+            <text class="ball-number">S</text>
+          </view>
+          <view class="card-content">
+            <text class="card-title">斯诺克</text>
+            <text class="card-desc">专业斯诺克计分\n红-彩循环、清彩、犯规、自由球</text>
+          </view>
+          <view class="card-arrow">›</view>
+        </view>
       </view>
-      
+
       <!-- 底部信息 -->
       <view class="footer">
         <text class="version">v1.0.0</text>
@@ -78,13 +88,14 @@ import performanceMonitor from '@/utils/performance.js'
 export default {
   data() {
     return {
-      isLoading: true
+      isLoading: true,
+      navigating: false
     }
   },
   onLoad() {
     // 监控主页加载性能
     this.pageLoadMonitor = performanceMonitor.monitorPageLoad('主页')
-    
+
     // 预加载关键资源
     this.preloadResources()
   },
@@ -110,6 +121,8 @@ export default {
       console.log('页面资源预处理完成')
     },
     selectEightBall() {
+      if (this.navigating) return
+      this.navigating = true
       performanceMonitor.startTimer('页面跳转-八球')
       uni.navigateTo({
         url: '/pages/room-setup/room-setup?mode=eight-ball',
@@ -117,10 +130,15 @@ export default {
         animationDuration: 300,
         complete: () => {
           performanceMonitor.endTimer('页面跳转-八球', 'navigation')
+          setTimeout(() => {
+            this.navigating = false
+          }, 400)
         }
       })
     },
     selectNineBall() {
+      if (this.navigating) return
+      this.navigating = true
       performanceMonitor.startTimer('页面跳转-九球')
       uni.navigateTo({
         url: '/pages/nine-ball-mode/nine-ball-mode',
@@ -128,8 +146,43 @@ export default {
         animationDuration: 300,
         complete: () => {
           performanceMonitor.endTimer('页面跳转-九球', 'navigation')
+          setTimeout(() => {
+            this.navigating = false
+          }, 400)
         }
       })
+    },
+    selectSnooker() {
+      if (this.navigating) return
+      this.navigating = true
+      performanceMonitor.startTimer('页面跳转-斯诺克')
+      uni.navigateTo({
+        url: '/pages/snooker-mode/snooker-mode',
+        animationType: 'slide-in-right',
+        animationDuration: 300,
+        complete: () => {
+          performanceMonitor.endTimer('页面跳转-斯诺克', 'navigation')
+          setTimeout(() => {
+            this.navigating = false
+          }, 400)
+        }
+      })
+    }
+  },
+  // 转发给好友
+  onShareAppMessage(res) {
+    return {
+      title: '台球计分器 - 专业计分工具',
+      path: '/pages/index/index',
+      imageUrl: '/static/logo.png'
+    }
+  },
+  // 分享到朋友圈
+  onShareTimeline(res) {
+    return {
+      title: '台球计分器 - 专业计分工具',
+      query: 'from=timeline',
+      imageUrl: '/static/logo.png'
     }
   }
 }
@@ -169,7 +222,7 @@ export default {
 .mode-container {
   padding: 0 60rpx;
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 .mode-card {
@@ -193,13 +246,20 @@ export default {
 }
 
 
-
 .eight-ball {
   border-left: 8rpx solid #C62828;
 }
 
 .nine-ball {
   border-left: 8rpx solid #1565C0;
+}
+
+.snooker {
+  border-left: 8rpx solid #2E7D32;
+}
+
+.snooker .card-icon {
+  background: #2E7D32;
 }
 
 .card-icon {
@@ -259,7 +319,8 @@ export default {
   left: 0;
   right: 0;
   text-align: center;
-  z-index: 1;
+  z-index: 0;
+  pointer-events: none;
 }
 
 .version {

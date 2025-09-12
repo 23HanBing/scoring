@@ -2,83 +2,83 @@
   <view class="container">
     <!-- 背景装饰 -->
     <view class="background"></view>
-    
+
     <!-- 标题区域 -->
     <view class="header">
       <text class="title">{{ modeTitle }}</text>
       <text class="subtitle">{{ modeSubtitle }}</text>
     </view>
-    
+
     <!-- 设置表单 -->
     <view class="form-container">
       <!-- 游戏参数设置 -->
       <view class="form-section">
         <text class="section-title">游戏设置</text>
-        
+
         <!-- 中式八球设置 -->
         <view v-if="gameMode === 'eight-ball'" class="setting-item">
           <text class="setting-label">总局数</text>
           <view class="setting-options">
-            <view 
-              v-for="option in gameOptions" 
-              :key="option.value"
-              class="option-btn"
-              :class="{ active: selectedOption === option.value }"
-              @tap="selectOption(option.value)"
+            <view
+                v-for="option in gameOptions"
+                :key="option.value"
+                class="option-btn"
+                :class="{ active: selectedOption === option.value }"
+                @tap="selectOption(option.value)"
             >
               <text class="option-text">{{ option.label }}</text>
             </view>
           </view>
         </view>
-        
+
         <!-- 九球追分设置 -->
         <view v-if="gameMode.includes('nine-ball')" class="setting-item">
           <text class="setting-label">目标分数</text>
           <view class="setting-options">
-            <view 
-              v-for="option in scoreOptions" 
-              :key="option.value"
-              class="option-btn"
-              :class="{ active: selectedScore === option.value }"
-              @tap="selectScore(option.value)"
+            <view
+                v-for="option in scoreOptions"
+                :key="option.value"
+                class="option-btn"
+                :class="{ active: selectedScore === option.value }"
+                @tap="selectScore(option.value)"
             >
               <text class="option-text">{{ option.label }}</text>
             </view>
           </view>
         </view>
       </view>
-      
+
       <!-- 玩家信息设置 -->
       <view class="form-section">
         <text class="section-title">玩家信息</text>
-        
+
         <view class="player-inputs">
-          <view 
-            v-for="(player, index) in players" 
-            :key="index"
-            class="player-input-item"
+          <view
+              v-for="(player, index) in players"
+              :key="index"
+              class="player-input-item"
           >
             <view class="player-avatar" :class="`player-${index + 1}`">
               <text class="player-number">{{ index + 1 }}</text>
             </view>
-            <input 
-              class="player-input"
-              :placeholder="`玩家${index + 1}姓名`"
-              v-model="players[index].name"
-              maxlength="8"
+            <input
+                class="player-input"
+                :placeholder="`玩家${index + 1}姓名`"
+                v-model="players[index].name"
+                maxlength="8"
             />
           </view>
         </view>
       </view>
     </view>
-    
+
     <!-- 开始按钮 -->
     <view class="start-container">
       <button class="start-btn" :class="gameMode" @tap="startGame" :disabled="!canStart">
         <text class="start-text">开始比赛</text>
       </button>
     </view>
-    
+
     <!-- 规则提示 -->
     <view class="rules-tip" v-if="gameMode.includes('nine-ball')">
       <text class="tip-text">💡 {{ ruleTip }}</text>
@@ -95,14 +95,14 @@ export default {
       selectedScore: 100, // 默认100分
       players: [],
       gameOptions: [
-        { label: '无限制', value: 0 },
-        { label: '5局3胜', value: 5 },
-        { label: '7局4胜', value: 7 },
-        { label: '9局5胜', value: 9 }
+        {label: '无限制', value: 0},
+        {label: '5局3胜', value: 5},
+        {label: '7局4胜', value: 7},
+        {label: '9局5胜', value: 9}
       ],
       scoreOptions: [
-        { label: '100分', value: 100 },
-        { label: '无限制', value: 0 }
+        {label: '100分', value: 100},
+        {label: '无限制', value: 0}
       ]
     }
   },
@@ -142,7 +142,7 @@ export default {
   methods: {
     initPlayers() {
       const playerCount = this.gameMode === 'nine-ball-3p' ? 3 : 2
-      this.players = Array.from({ length: playerCount }, (_, index) => ({
+      this.players = Array.from({length: playerCount}, (_, index) => ({
         name: `玩家${index + 1}`,
         id: index + 1
       }))
@@ -161,14 +161,14 @@ export default {
         })
         return
       }
-      
+
       // 构建游戏数据
       const gameData = {
         mode: this.gameMode,
         players: this.players,
         settings: {}
       }
-      
+
       if (this.gameMode === 'eight-ball') {
         if (this.selectedOption === 0) {
           // 无限制模式
@@ -181,22 +181,38 @@ export default {
       } else {
         gameData.settings.targetScore = this.selectedScore
       }
-      
+
       // 保存游戏数据
       uni.setStorageSync('currentGame', gameData)
-      
+
       // 跳转到对应的游戏页面
       const pageMap = {
         'eight-ball': '/pages/eight-ball-game/eight-ball-game',
         'nine-ball-2p': '/pages/nine-ball-2p/nine-ball-2p',
         'nine-ball-3p': '/pages/nine-ball-3p/nine-ball-3p'
       }
-      
+
       uni.navigateTo({
         url: pageMap[this.gameMode],
         animationType: 'slide-in-right',
         animationDuration: 300
       })
+    }
+  },
+  // 转发给好友
+  onShareAppMessage(res) {
+    return {
+      title: '台球计分器 - 房间设置',
+      path: '/pages/room-setup/room-setup',
+      imageUrl: '/static/logo.png'
+    }
+  },
+  // 分享到朋友圈
+  onShareTimeline(res) {
+    return {
+      title: '台球计分器 - 房间设置',
+      query: 'from=timeline',
+      imageUrl: '/static/logo.png'
     }
   }
 }
@@ -217,7 +233,6 @@ export default {
   bottom: 0;
   z-index: 0;
 }
-
 
 
 .header {
