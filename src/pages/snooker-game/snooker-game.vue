@@ -119,22 +119,21 @@
           <view class="form-row">
             <text class="label">分值</text>
             <view class="seg">
-              <button v-for="p in [4,5,6,7]" :key="p"
-                      :class="['seg-btn',{active:foulPoints===p}]"
-                      @tap="foulPoints=p">{{ p }}
-              </button>
+              <button v-for="p in [4,5,6,7]" :key="p" 
+                      :class="['seg-btn',{active:foulPoints===p}]" 
+                      @tap="foulPoints=p">{{p}}</button>
             </view>
           </view>
           <view class="form-row">
             <text class="label">犯规方</text>
             <view class="seg">
-              <button :class="['seg-btn',{active:foulBy==='A'}]" @tap="foulBy='A'">{{ playerA }}</button>
-              <button :class="['seg-btn',{active:foulBy==='B'}]" @tap="foulBy='B'">{{ playerB }}</button>
+              <button :class="['seg-btn',{active:foulBy==='A'}]" @tap="foulBy='A'">{{playerA}}</button>
+              <button :class="['seg-btn',{active:foulBy==='B'}]" @tap="foulBy='B'">{{playerB}}</button>
             </view>
           </view>
           <view class="form-row switch-row">
             <text class="label">Miss</text>
-            <switch :checked="foulMiss" @change="e=>foulMiss=e.detail.value"/>
+            <switch :checked="foulMiss" @change="e=>foulMiss=e.detail.value" />
           </view>
           <view class="dialog-actions">
             <button class="panel-cancel" @tap="closeOverlays">取消</button>
@@ -149,7 +148,7 @@
           <text class="panel-title">自由球</text>
           <view class="form-row">
             <text class="label">得分</text>
-            <input class="score-input" type="number" v-model.number="freeBallScore" placeholder="输入得分"/>
+            <input class="score-input" type="number" v-model.number="freeBallScore" placeholder="输入得分" />
           </view>
           <view class="dialog-actions">
             <button class="panel-cancel" @tap="closeOverlays">取消</button>
@@ -176,9 +175,9 @@ export default {
       playerA: '',
       playerB: '',
       redsRemaining: 15,
-      colorsOnTable: {Y: true, G: true, B: true, Br: true, Pk: true, Bk: true},
-      scores: {A: 0, B: 0},
-      highestBreaks: {A: 0, B: 0}, // 单杆最高分
+      colorsOnTable: { Y:true, G:true, B:true, Br:true, Pk:true, Bk:true },
+      scores: { A:0, B:0 },
+      highestBreaks: { A:0, B:0 }, // 单杆最高分
       atTable: 'A',
       currentBreak: 0,
       phase: 'reds', // 'reds' 或 'colors'
@@ -192,7 +191,7 @@ export default {
       remainingPoints: 0,
       undoStack: [],
       redoStack: [],
-      matchFrames: {A: 0, B: 0},
+      matchFrames: { A:0, B:0 },
       initialReds: 15,
       showHistory: true,
       showFoulBanner: false,
@@ -205,11 +204,9 @@ export default {
       freeBallGuide: true
     }
   },
-
+  
   onShow() {
-    setTimeout(() => {
-      this.isLoading = false
-    }, 100)
+    setTimeout(() => { this.isLoading = false }, 100)
     const setup = uni.getStorageSync('snooker:setup') || {}
     this.playerA = setup.playerA || '玩家1'
     this.playerB = setup.playerB || '玩家2'
@@ -219,13 +216,13 @@ export default {
     // 读取设置页的开关配置
     this.missHint = setup.missHint !== undefined ? setup.missHint : true
     this.freeBallGuide = setup.freeBallGuide !== undefined ? setup.freeBallGuide : true
-
+    
     // 加载比赛小分
     const frames = uni.getStorageSync('snooker:match')
     if (frames && typeof frames.A === 'number' && typeof frames.B === 'number') {
       this.matchFrames = frames
     }
-
+    
     // 读取上次对局状态
     const saved = uni.getStorageSync('snooker:state')
     if (saved && saved.playerA && saved.playerB && saved.initialReds === setupReds) {
@@ -235,10 +232,10 @@ export default {
       // 红球数设置已改变，清除旧的对局状态
       uni.removeStorageSync('snooker:state')
     }
-
+    
     this.recalc()
   },
-
+  
   methods: {
     // 保存对局状态
     saveState() {
@@ -262,10 +259,9 @@ export default {
         missHint: this.missHint,
         freeBallGuide: this.freeBallGuide
       }
-      try {
-        uni.setStorageSync('snooker:state', JSON.parse(JSON.stringify(snapshot)))
-      } catch (e) {
-      }
+      try { 
+        uni.setStorageSync('snooker:state', JSON.parse(JSON.stringify(snapshot))) 
+      } catch(e) {}
     },
 
     // 推入撤销栈
@@ -303,7 +299,7 @@ export default {
     // 新增：撤销最近一步
     undo() {
       if (!this.undoStack.length) {
-        return uni.showToast({title: '没有可撤销的操作', icon: 'none'})
+        return uni.showToast({ title: '没有可撤销的操作', icon: 'none' })
       }
       // 将当前快照放入重做栈（预留）
       const cur = JSON.parse(JSON.stringify({
@@ -330,19 +326,19 @@ export default {
       this.events = prev.events
       this.lastPotRed = prev.lastPotRed === true
       this.recalc()
-      uni.showToast({title: '已撤销', icon: 'none'})
+      uni.showToast({ title: '已撤销', icon: 'none' })
     },
     // 重新计算剩余分数等信息
     recalc() {
       if (this.redsRemaining <= 0) this.phase = 'colors'
-
-      const colorSum = (this.colorsOnTable.Y ? 2 : 0) +
-          (this.colorsOnTable.G ? 3 : 0) +
-          (this.colorsOnTable.Br ? 4 : 0) +
-          (this.colorsOnTable.B ? 5 : 0) +
-          (this.colorsOnTable.Pk ? 6 : 0) +
-          (this.colorsOnTable.Bk ? 7 : 0)
-
+      
+      const colorSum = (this.colorsOnTable.Y ? 2 : 0) + 
+                      (this.colorsOnTable.G ? 3 : 0) + 
+                      (this.colorsOnTable.Br ? 4 : 0) + 
+                      (this.colorsOnTable.B ? 5 : 0) + 
+                      (this.colorsOnTable.Pk ? 6 : 0) + 
+                      (this.colorsOnTable.Bk ? 7 : 0)
+      
       this.remainingPoints = this.redsRemaining * 8 + colorSum
       this.saveState()
     },
@@ -355,7 +351,7 @@ export default {
       } else {
         // 清彩阶段，必须按顺序：黄2、绿3、棕4、蓝5、粉6、黑7
         const order = [2, 3, 4, 5, 6, 7]
-        const colorMap = {2: 'Y', 3: 'G', 4: 'Br', 5: 'B', 6: 'Pk', 7: 'Bk'}
+        const colorMap = { 2:'Y', 3:'G', 4:'Br', 5:'B', 6:'Pk', 7:'Bk' }
         for (const val of order) {
           if (this.colorsOnTable[colorMap[val]]) {
             return val === value
@@ -368,83 +364,83 @@ export default {
     // 进红球
     onPotRed() {
       if (this.redsRemaining <= 0) {
-        return uni.showToast({title: '无红球可打', icon: 'none'})
+        return uni.showToast({title:'无红球可打',icon:'none'})
       }
-
+      
       this.pushUndo()
       performanceMonitor.startTimer('进红球')
-
+      
       this.scores[this.atTable] += 1
       this.currentBreak += 1
       this.redsRemaining -= 1
       // 记录上一击为红球
       this.lastPotRed = true
-
+      
       // 更新单杆最高
       if (this.currentBreak > this.highestBreaks[this.atTable]) {
         this.highestBreaks[this.atTable] = this.currentBreak
       }
-
-      this.events.unshift({
-        text: `${this.atTable === 'A' ? this.playerA : this.playerB} 进红球 +1`,
-        ts: Date.now()
+      
+      this.events.unshift({ 
+        text: `${this.atTable==='A'?this.playerA:this.playerB} 进红球 +1`, 
+        ts: Date.now() 
       })
-
+      
       this.triggerScoreFlash()
       this.recalc()
-      performanceMonitor.endTimer('进红球', 'interaction')
+      performanceMonitor.endTimer('进红球','interaction')
     },
 
     // 进彩球
     potColor(value) {
       if (!this.canPotColor(value)) {
-        let msg = this.phase === 'colors' ? '需按清彩顺序' : '请先进红球'
-
+        const msg = this.phase === 'colors' ? '需按清彩顺序' : '请先进红球'
+        
         // Miss 提示功能：当用户尝试打错球时给出提示
         if (this.missHint && this.phase === 'colors') {
           const nextBall = this.getNextColorBall()
           if (nextBall) {
-            const colorNames = {2: '黄球', 3: '绿球', 4: '棕球', 5: '蓝球', 6: '粉球', 7: '黑球'}
+            const colorNames = { 2:'黄球', 3:'绿球', 4:'棕球', 5:'蓝球', 6:'粉球', 7:'黑球' }
             msg = `清彩阶段需按顺序，下一个应打 ${colorNames[nextBall.value]}（${nextBall.value}分）`
           }
         }
-
-        return uni.showToast({title: msg, icon: 'none'})
+        
+        return uni.showToast({ title: msg, icon: 'none' })
       }
-
+    
       this.pushUndo()
       performanceMonitor.startTimer('进彩球')
-
+      
       this.scores[this.atTable] += value
       this.currentBreak += value
-
+      
       // 红球阶段击打彩球后，应重置 lastPotRed（下一杆应回到红球）
       if (this.phase === 'reds') {
         this.lastPotRed = false
       }
-
+      
       // 更新单杆最高
       if (this.currentBreak > this.highestBreaks[this.atTable]) {
         this.highestBreaks[this.atTable] = this.currentBreak
       }
-
+      
       // 清彩阶段移除彩球（按顺序不复位）
       if (this.phase === 'colors') {
-        const colorMap = {2: 'Y', 3: 'G', 4: 'Br', 5: 'B', 6: 'Pk', 7: 'Bk'}
+        const colorMap = { 2:'Y', 3:'G', 4:'Br', 5:'B', 6:'Pk', 7:'Bk' }
         const key = colorMap[value]
         if (key) this.colorsOnTable[key] = false
       }
-
-      const colorNames = {2: '黄球', 3: '绿球', 4: '棕球', 5: '蓝球', 6: '粉球', 7: '黑球'}
-      this.events.unshift({
-        text: `${this.atTable === 'A' ? this.playerA : this.playerB} 进${colorNames[value]} +${value}`,
-        ts: Date.now()
+      
+      const colorNames = { 2:'黄球', 3:'绿球', 4:'棕球', 5:'蓝球', 6:'粉球', 7:'黑球' }
+      this.events.unshift({ 
+        text: `${this.atTable==='A'?this.playerA:this.playerB} 进${colorNames[value]} +${value}`, 
+        ts: Date.now() 
       })
-
+      
       this.triggerScoreFlash()
       this.recalc()
-      performanceMonitor.endTimer('进彩球', 'interaction')
-
+      performanceMonitor.endTimer('进彩球','interaction')
+      
       // 检查是否结束
       if (this.phase === 'colors' && !this.hasColorsRemaining()) {
         this.endFrame(true)
@@ -454,13 +450,13 @@ export default {
     // 新增：获取清彩阶段下一个应打的彩球
     getNextColorBall() {
       if (this.phase !== 'colors') return null
-
+      
       const order = [2, 3, 4, 5, 6, 7]
-      const colorMap = {2: 'Y', 3: 'G', 4: 'Br', 5: 'B', 6: 'Pk', 7: 'Bk'}
-
+      const colorMap = { 2:'Y', 3:'G', 4:'Br', 5:'B', 6:'Pk', 7:'Bk' }
+      
       for (const val of order) {
         if (this.colorsOnTable[colorMap[val]]) {
-          return {value: val, key: colorMap[val]}
+          return { value: val, key: colorMap[val] }
         }
       }
       return null
@@ -469,28 +465,28 @@ export default {
     // 新增：Free Ball 指引功能
     showFreeBallGuide() {
       if (!this.freeBallGuide) return
-
+      
       // 简化的 Free Ball 判定：当前选手犯规且台面上有多个球可选时
       const availableBalls = []
-
+      
       if (this.phase === 'reds' && this.redsRemaining > 0) {
         availableBalls.push('红球')
       }
-
+      
       if (this.phase === 'colors') {
         const nextBall = this.getNextColorBall()
         if (nextBall) {
-          const colorNames = {2: '黄球', 3: '绿球', 4: '棕球', 5: '蓝球', 6: '粉球', 7: '黑球'}
+          const colorNames = { 2:'黄球', 3:'绿球', 4:'棕球', 5:'蓝球', 6:'粉球', 7:'黑球' }
           availableBalls.push(colorNames[nextBall.value])
         }
       }
-
+      
       // 在特定犯规情况下，所有彩球都可作为 Free Ball
       const allColors = Object.keys(this.colorsOnTable).filter(key => this.colorsOnTable[key])
       if (allColors.length > 1) {
-        const colorNames = {Y: '黄球', G: '绿球', Br: '棕球', B: '蓝球', Pk: '粉球', Bk: '黑球'}
+        const colorNames = { Y:'黄球', G:'绿球', Br:'棕球', B:'蓝球', Pk:'粉球', Bk:'黑球' }
         const colorOptions = allColors.map(key => colorNames[key]).join('、')
-
+        
         uni.showModal({
           title: 'Free Ball 指引',
           content: `当前可选择任意彩球作为 Free Ball：${colorOptions}`,
@@ -505,73 +501,70 @@ export default {
       this.switchTurn()
       // 未进球则重置 lastPotRed
       this.lastPotRed = false
-      this.events.unshift({
-        text: `${this.atTable === 'A' ? this.playerB : this.playerA} 不进，换人击打`,
-        ts: Date.now()
+      this.events.unshift({ 
+        text: `${this.atTable==='A'?this.playerB:this.playerA} 不进，换人击打`, 
+        ts: Date.now() 
       })
       // 保存最新状态，支持离开后继续对局
       this.recalc()
-    },
-
-    // 新增：结束本局并开始新的一局
-    // 仅当显式传入 true 时跳过确认；处理按钮绑定传入的事件对象
-    endFrame(arg) {
-      const skipConfirm = arg === true
-      const scoreA = this.scores.A
-      const scoreB = this.scores.B
-      let winner = null
-      if (scoreA > scoreB) winner = 'A'
-      if (scoreB > scoreA) winner = 'B'
-
-      const applyAndNext = (startSide) => {
-        if (winner) {
-          this.matchFrames[winner] += 1
-          try {
-            uni.setStorageSync('snooker:match', this.matchFrames)
-          } catch (e) {
+      },
+      
+      // 新增：结束本局并开始新的一局
+      // 仅当显式传入 true 时跳过确认；处理按钮绑定传入的事件对象
+      endFrame(arg) {
+        const skipConfirm = arg === true
+        const scoreA = this.scores.A
+        const scoreB = this.scores.B
+        let winner = null
+        if (scoreA > scoreB) winner = 'A'
+        if (scoreB > scoreA) winner = 'B'
+    
+        const applyAndNext = (startSide) => {
+          if (winner) {
+            this.matchFrames[winner] += 1
+            try { uni.setStorageSync('snooker:match', this.matchFrames) } catch(e) {}
+            this.events.unshift({
+              text: `${winner==='A'?this.playerA:this.playerB} 赢下本局（${scoreA} - ${scoreB}）`,
+              ts: Date.now()
+            })
+          } else {
+            this.events.unshift({
+              text: `平局（${scoreA} - ${scoreB}），开始新局`,
+              ts: Date.now()
+            })
           }
-          this.events.unshift({
-            text: `${winner === 'A' ? this.playerA : this.playerB} 赢下本局（${scoreA} - ${scoreB}）`,
-            ts: Date.now()
-          })
-        } else {
-          this.events.unshift({
-            text: `平局（${scoreA} - ${scoreB}），开始新局`,
-            ts: Date.now()
-          })
+          this.resetForNextFrame(startSide || winner || 'A')
         }
-        this.resetForNextFrame(startSide || winner || 'A')
-      }
-
-      if (skipConfirm) {
-        return applyAndNext(winner || 'A')
-      }
-
-      if (!winner) {
-        // 平局：让用户选择下一局开球者
-        uni.showActionSheet({
-          title: '平局，请选择下一局开球方',
-          itemList: [`${this.playerA} 开球`, `${this.playerB} 开球`],
+    
+        if (skipConfirm) {
+          return applyAndNext(winner || 'A')
+        }
+    
+        if (!winner) {
+          // 平局：让用户选择下一局开球者
+          uni.showActionSheet({
+            title: '平局，请选择下一局开球方',
+            itemList: [`${this.playerA} 开球`, `${this.playerB} 开球`],
+            success: (res) => {
+              const idx = res.tapIndex
+              const side = idx === 0 ? 'A' : 'B'
+              applyAndNext(side)
+            },
+            fail: () => applyAndNext('A')
+          })
+          return
+        }
+    
+        uni.showModal({
+          title: '结束本局',
+          content: `${winner==='A'?this.playerA:this.playerB} 以 ${Math.max(scoreA,scoreB)} - ${Math.min(scoreA,scoreB)} 领先，开始新的一局？`,
+          confirmText: '开始新局',
+          cancelText: '取消',
           success: (res) => {
-            const idx = res.tapIndex
-            const side = idx === 0 ? 'A' : 'B'
-            applyAndNext(side)
-          },
-          fail: () => applyAndNext('A')
+            if (res.confirm) applyAndNext(winner)
+          }
         })
-        return
-      }
-
-      uni.showModal({
-        title: '结束本局',
-        content: `${winner === 'A' ? this.playerA : this.playerB} 以 ${Math.max(scoreA, scoreB)} - ${Math.min(scoreA, scoreB)} 领先，开始新的一局？`,
-        confirmText: '开始新局',
-        cancelText: '取消',
-        success: (res) => {
-          if (res.confirm) applyAndNext(winner)
-        }
-      })
-    },
+      },
     // 换人击打
     switchTurn() {
       this.atTable = this.atTable === 'A' ? 'B' : 'A'
@@ -584,34 +577,34 @@ export default {
     confirmFoul() {
       this.pushUndo()
       performanceMonitor.startTimer('犯规')
-
+      
       const offender = this.foulBy
       const receiver = offender === 'A' ? 'B' : 'A'
       const pts = this.foulPoints
-
+      
       this.scores[receiver] += pts
       this.lastFoulPoints = pts
       // 犯规后重置 lastPotRed
       this.lastPotRed = false
-
+      
       // 显示犯规提示
       this.showFoulBanner = true
       setTimeout(() => this.showFoulBanner = false, 1500)
-
-      this.events.unshift({
-        text: `${offender === 'A' ? this.playerA : this.playerB} 犯规 +${pts} 送分给 ${receiver === 'A' ? this.playerA : this.playerB}${this.foulMiss ? '（Miss）' : ''}`,
-        ts: Date.now()
+      
+      this.events.unshift({ 
+        text: `${offender==='A'?this.playerA:this.playerB} 犯规 +${pts} 送分给 ${receiver==='A'?this.playerA:this.playerB}${this.foulMiss?'（Miss）':''}`, 
+        ts: Date.now() 
       })
-
+      
       // 通常换人击打
       if (this.atTable === offender) {
         this.switchTurn()
       }
-
+      
       this.showFoulDialog = false
       this.recalc()
-      performanceMonitor.endTimer('犯规', 'interaction')
-
+      performanceMonitor.endTimer('犯规','interaction')
+      
       // Miss重打选择
       if (this.foulMiss) {
         uni.showModal({
@@ -624,9 +617,9 @@ export default {
               this.atTable = offender
               this.currentBreak = 0
               this.lastPotRed = false
-              this.events.unshift({
-                text: `Miss 重打：${offender === 'A' ? this.playerA : this.playerB} 重新击打`,
-                ts: Date.now()
+              this.events.unshift({ 
+                text: `Miss 重打：${offender==='A'?this.playerA:this.playerB} 重新击打`, 
+                ts: Date.now() 
               })
             }
           }
@@ -636,13 +629,13 @@ export default {
 
     // 重置为下一局
     resetForNextFrame(winnerSide) {
-      this.scores = {A: 0, B: 0}
+      this.scores = { A:0, B:0 }
       this.currentBreak = 0
       this.redsRemaining = this.initialReds
-      this.colorsOnTable = {Y: true, G: true, B: true, Br: true, Pk: true, Bk: true}
+      this.colorsOnTable = { Y:true, G:true, B:true, Br:true, Pk:true, Bk:true }
       this.phase = 'reds'
       this.atTable = winnerSide || 'A'
-      this.highestBreaks = {A: 0, B: 0}
+      this.highestBreaks = { A:0, B:0 }
 
       // 新的一局：清空撤销/重做栈与历史记录，避免跨局撤销导致状态错乱
       this.undoStack = []
@@ -670,7 +663,7 @@ export default {
     // 格式化时间
     formatTime(timestamp) {
       const date = new Date(timestamp)
-      return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
+      return `${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')}`
     },
 
     // 关闭弹层
@@ -683,7 +676,7 @@ export default {
     // 确认自由球
     confirmFreeBall() {
       if (!this.freeBallScore || this.freeBallScore < 1 || this.freeBallScore > 7) {
-        return uni.showToast({title: '请输入1-7的有效分数', icon: 'none'})
+        return uni.showToast({ title: '请输入1-7的有效分数', icon: 'none' })
       }
 
       this.pushUndo()
@@ -697,15 +690,15 @@ export default {
         this.highestBreaks[this.atTable] = this.currentBreak
       }
 
-      this.events.unshift({
-        text: `${this.atTable === 'A' ? this.playerA : this.playerB} 自由球 +${this.freeBallScore}`,
-        ts: Date.now()
+      this.events.unshift({ 
+        text: `${this.atTable==='A'?this.playerA:this.playerB} 自由球 +${this.freeBallScore}`, 
+        ts: Date.now() 
       })
 
       this.triggerScoreFlash()
       this.recalc()
       this.showFreeBallDialog = false
-      performanceMonitor.endTimer('自由球', 'interaction')
+      performanceMonitor.endTimer('自由球','interaction')
     },
 
     closeOverlays() {
@@ -802,7 +795,7 @@ export default {
   border: none;
   margin: 10rpx;
   transition: all 0.3s ease;
-  box-shadow: 0 8rpx 15rpx rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8rpx 15rpx rgba(0,0,0,0.3);
 }
 
 .ball:active {
@@ -832,30 +825,12 @@ export default {
   gap: 15rpx;
 }
 
-.ball.yellow {
-  background: linear-gradient(135deg, #FFD700 0%, #FFC107 100%);
-  color: #333;
-}
-
-.ball.green {
-  background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
-}
-
-.ball.brown {
-  background: linear-gradient(135deg, #8D6E63 0%, #6D4C41 100%);
-}
-
-.ball.blue {
-  background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
-}
-
-.ball.pink {
-  background: linear-gradient(135deg, #E91E63 0%, #C2185B 100%);
-}
-
-.ball.black {
-  background: linear-gradient(135deg, #424242 0%, #212121 100%);
-}
+.ball.yellow { background: linear-gradient(135deg, #FFD700 0%, #FFC107 100%); color: #333; }
+.ball.green { background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%); }
+.ball.brown { background: linear-gradient(135deg, #8D6E63 0%, #6D4C41 100%); }
+.ball.blue { background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%); }
+.ball.pink { background: linear-gradient(135deg, #E91E63 0%, #C2185B 100%); }
+.ball.black { background: linear-gradient(135deg, #424242 0%, #212121 100%); }
 
 .ball-text {
   font-size: 24rpx;

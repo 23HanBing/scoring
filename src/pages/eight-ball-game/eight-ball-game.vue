@@ -2,6 +2,7 @@
   <view class="container">
     <!-- 背景 -->
     <view class="background"></view>
+    
     <!-- 顶部信息栏 -->
     <view class="header">
       <view class="game-info">
@@ -17,13 +18,14 @@
         </button>
       </view>
     </view>
+    
     <!-- 比分显示 -->
     <view class="score-board">
-      <view
-          v-for="(player, index) in players"
-          :key="player.id"
-          class="player-score"
-          :class="{ winner: winGames > 0 && (player?.wins || 0) >= winGames, leading: (player?.wins || 0) > 0 && (player?.wins || 0) === Math.max(...players.map(p => p?.wins || 0)) }"
+      <view 
+        v-for="(player, index) in players" 
+        :key="player.id"
+        class="player-score"
+        :class="{ winner: winGames > 0 && (player?.wins || 0) >= winGames, leading: (player?.wins || 0) > 0 && (player?.wins || 0) === Math.max(...players.map(p => p?.wins || 0)) }"
       >
         <view class="player-avatar" :class="`player-${index + 1}`">
           <text class="player-number">{{ index + 1 }}</text>
@@ -44,18 +46,20 @@
         </view>
       </view>
     </view>
+    
     <!-- 当前局信息 -->
     <view class="current-game" v-if="!gameFinished">
       <text class="current-title">第{{ currentGame }}局</text>
       <text class="current-subtitle">选择获胜方式</text>
     </view>
+    
     <!-- 计分按钮区域 -->
     <view class="scoring-area" v-if="!gameFinished">
       <view class="player-actions">
-        <view
-            v-for="(player, index) in players"
-            :key="player.id"
-            class="player-section"
+        <view 
+          v-for="(player, index) in players" 
+          :key="player.id"
+          class="player-section"
         >
           <view class="player-header">
             <view class="player-avatar-small" :class="`player-${index + 1}`">
@@ -63,29 +67,36 @@
             </view>
             <text class="player-name-small">{{ player?.name || '玩家' }}</text>
           </view>
+          
           <view class="score-buttons">
-            <button
-                class="score-btn blast-clear"
-                @tap="scorePoint(player.id, 'blast', 1)"
+            <button 
+              class="score-btn blast-clear"
+              @tap="scorePoint(player.id, 'blast', 1)"
             >
               <text class="btn-title">炸清</text>
+            
             </button>
-            <button
-                class="score-btn clear"
-                @tap="scorePoint(player.id, 'clear', 1)"
+            
+            <button 
+              class="score-btn clear"
+              @tap="scorePoint(player.id, 'clear', 1)"
             >
               <text class="btn-title">接清</text>
+                
             </button>
-            <button
-                class="score-btn normal-win"
-                @tap="scorePoint(player.id, 'normal', 1)"
+            
+            <button 
+              class="score-btn normal-win"
+              @tap="scorePoint(player.id, 'normal', 1)"
             >
               <text class="btn-title">普胜</text>
+              
             </button>
           </view>
         </view>
       </view>
     </view>
+    
     <!-- 游戏结束界面 -->
     <view class="game-over" v-if="gameFinished">
       <view class="winner-section">
@@ -98,6 +109,7 @@
           <text class="winner-score">{{ getWinner().wins }}胜获胜</text>
         </view>
       </view>
+      
       <view class="game-actions">
         <button class="action-button restart" @tap="restartGame">
           <text class="action-text">重新开始</text>
@@ -107,12 +119,14 @@
         </button>
       </view>
     </view>
+    
     <!-- 撤销按钮 -->
     <view class="undo-section" v-if="gameHistory.length > 0 && !gameFinished">
       <button class="undo-btn" @tap="undoLastScore">
         <text class="undo-text">↶ 撤销上一步</text>
       </button>
     </view>
+    
     <!-- 历史记录弹窗 -->
     <view class="history-modal" v-if="showHistoryModal" @tap="hideHistory">
       <view class="history-content" @tap.stop>
@@ -121,27 +135,27 @@
           <button class="close-btn" @tap="hideHistory">×</button>
         </view>
         <scroll-view class="history-list" scroll-y>
-          <view
-              v-for="(record, index) in gameHistory"
-              :key="index"
-              class="history-item"
+          <view 
+            v-for="(record, index) in gameHistory" 
+            :key="index"
+            class="history-item"
           >
             <text class="history-game">第{{ record.game }}局</text>
-            <text class="history-detail">{{ record.playerName }}
-              {{ record.type === 'blast' ? '炸清' : record.type === 'clear' ? '接清' : '普胜' }}
-            </text>
+            <text class="history-detail">{{ record.playerName }} {{ record.type === 'blast' ? '炸清' : record.type === 'clear' ? '接清' : '普胜' }}</text>
             <text class="history-score">+{{ record.score }}分</text>
           </view>
         </scroll-view>
       </view>
     </view>
+    
     <!-- 隐藏的canvas用于截图 -->
-    <canvas
-        canvas-id="shareCanvas"
-        :style="{ width: canvasWidth + 'px', height: canvasHeight + 'px', position: 'absolute', left: '-9999px', top: '-9999px' }"
+    <canvas 
+      canvas-id="shareCanvas" 
+      :style="{ width: canvasWidth + 'px', height: canvasHeight + 'px', position: 'absolute', left: '-9999px', top: '-9999px' }"
     ></canvas>
   </view>
 </template>
+
 <script>
 export default {
   data() {
@@ -151,6 +165,7 @@ export default {
       winGames: 3,
       currentGame: 1,
       showHistoryModal: false,
+      
       // canvas截图相关
       canvasWidth: 375,
       canvasHeight: 667,
@@ -195,16 +210,18 @@ export default {
       } else {
         // 默认数据
         this.players = [
-          {id: 1, name: '玩家1', wins: 0, blastCount: 0, clearCount: 0, normalCount: 0},
-          {id: 2, name: '玩家2', wins: 0, blastCount: 0, clearCount: 0, normalCount: 0}
+          { id: 1, name: '玩家1', wins: 0, blastCount: 0, clearCount: 0, normalCount: 0 },
+          { id: 2, name: '玩家2', wins: 0, blastCount: 0, clearCount: 0, normalCount: 0 }
         ]
         this.totalGames = 5
         this.winGames = 3
       }
     },
+    
     scorePoint(playerId, type, score) {
       const player = this.players.find(p => p.id === playerId)
       if (!player) return
+      
       // 记录历史
       this.gameHistory.push({
         game: this.currentGame,
@@ -214,9 +231,11 @@ export default {
         score,
         timestamp: Date.now()
       })
+      
       // 增加胜局和对应统计
       if (player) {
         player.wins = (player.wins || 0) + 1
+        
         // 更新对应类型的统计
         if (type === 'blast') {
           player.blastCount = (player.blastCount || 0) + 1
@@ -226,23 +245,28 @@ export default {
           player.normalCount = (player.normalCount || 0) + 1
         }
       }
+      
       // 检查是否游戏结束
       if (player && (player.wins || 0) >= this.winGames) {
         this.finishGame()
       } else {
         this.currentGame += 1
       }
+      
       // 保存游戏状态
       this.saveGameState()
     },
-
+    
     undoLastScore() {
       if (this.gameHistory.length === 0) return
+      
       const lastRecord = this.gameHistory.pop()
       const player = this.players.find(p => p.id === lastRecord.playerId)
+      
       if (player && player.wins > 0) {
         player.wins -= 1
         this.currentGame = lastRecord.game
+        
         // 减少对应类型的统计
         if (lastRecord.type === 'blast' && player.blastCount > 0) {
           player.blastCount -= 1
@@ -252,16 +276,18 @@ export default {
           player.normalCount -= 1
         }
       }
+      
       this.saveGameState()
     },
-
+    
     getWinner() {
       return this.players.find(player => player && (player.wins || 0) >= this.winGames)
     },
-
+    
     getWinnerIndex() {
       return this.players.findIndex(player => player && (player.wins || 0) >= this.winGames)
     },
+    
     finishGame() {
       const winner = this.getWinner()
       uni.showToast({
@@ -269,6 +295,7 @@ export default {
         icon: 'success'
       })
     },
+    
     restartGame() {
       this.players.forEach(player => {
         if (player) {
@@ -282,6 +309,7 @@ export default {
       this.gameHistory = []
       this.saveGameState()
     },
+    
     resetGame() {
       uni.showModal({
         title: '重置比赛',
@@ -293,6 +321,7 @@ export default {
         }
       })
     },
+    
     goHome() {
       uni.reLaunch({
         url: '/pages/index/index',
@@ -300,12 +329,15 @@ export default {
         animationDuration: 300
       })
     },
+    
     showHistory() {
       this.showHistoryModal = true
     },
+    
     hideHistory() {
       this.showHistoryModal = false
     },
+    
     saveGameState() {
       const gameState = {
         players: this.players,
@@ -316,34 +348,34 @@ export default {
       }
       uni.setStorageSync('eightBallGameState', gameState)
     },
-
+    
     // 生成页面截图用于分享
     async generateShareImage() {
       return new Promise((resolve, reject) => {
         const ctx = uni.createCanvasContext('shareCanvas', this)
-
+        
         // 设置canvas尺寸
         const canvasW = this.canvasWidth
         const canvasH = this.canvasHeight
-
+        
         // 绘制背景
         ctx.setFillStyle('#C62828')
         ctx.fillRect(0, 0, canvasW, canvasH)
-
+        
         // 绘制标题
         ctx.setFillStyle('#ffffff')
         ctx.setFontSize(24)
         ctx.setTextAlign('center')
         ctx.fillText('八球对局', canvasW / 2, 60)
-
+        
         // 绘制比赛进度
         ctx.setFontSize(16)
         ctx.fillText(this.gameProgressText, canvasW / 2, 90)
-
+        
         // 绘制玩家信息
         const player1 = this.players[0]
         const player2 = this.players[1]
-
+        
         // 玩家1
         ctx.setFillStyle('#FF5722')
         ctx.fillRect(30, 150, 120, 120)
@@ -351,14 +383,14 @@ export default {
         ctx.setFontSize(18)
         ctx.setTextAlign('center')
         ctx.fillText('1', 90, 220)
-
+        
         ctx.setTextAlign('left')
         ctx.setFontSize(16)
         ctx.fillText(player1.name, 170, 180)
         ctx.setFillStyle('#4CAF50')
         ctx.setFontSize(32)
         ctx.fillText(`${player1.wins}局`, 170, 220)
-
+        
         // 玩家2
         ctx.setFillStyle('#2196F3')
         ctx.fillRect(30, 300, 120, 120)
@@ -366,33 +398,33 @@ export default {
         ctx.setFontSize(18)
         ctx.setTextAlign('center')
         ctx.fillText('2', 90, 370)
-
+        
         ctx.setTextAlign('left')
         ctx.setFontSize(16)
         ctx.fillText(player2.name, 170, 330)
         ctx.setFillStyle('#4CAF50')
         ctx.setFontSize(32)
         ctx.fillText(`${player2.wins}局`, 170, 370)
-
+        
         // 绘制统计信息
         ctx.setFillStyle('#ffffff')
         ctx.setFontSize(14)
         ctx.fillText(`炸清: ${player1.blastCount || 0} 接清: ${player1.clearCount || 0}`, 170, 250)
         ctx.fillText(`普胜: ${player1.normalCount || 0}`, 170, 270)
-
+        
         ctx.fillText(`炸清: ${player2.blastCount || 0} 接清: ${player2.clearCount || 0}`, 170, 400)
         ctx.fillText(`普胜: ${player2.normalCount || 0}`, 170, 420)
-
+        
         // 绘制当前局数
         ctx.setFontSize(18)
         ctx.setTextAlign('center')
         ctx.fillText(`第 ${this.currentGame} 局`, canvasW / 2, 480)
-
+        
         // 绘制时间戳
         ctx.setFontSize(12)
         ctx.fillText(new Date().toLocaleString(), canvasW / 2, canvasH - 30)
-
-        ctx.draw(false, (() => {
+        
+        ctx.draw(false, () => {
           setTimeout(() => {
             uni.canvasToTempFilePath({
               canvasId: 'shareCanvas',
@@ -410,7 +442,7 @@ export default {
               }
             }, this)
           }, 500)
-        }))
+        })()
       })
     }
   },
@@ -418,7 +450,7 @@ export default {
   async onShareAppMessage(res) {
     const player1 = this.players[0]
     const player2 = this.players[1]
-
+    
     try {
       const imagePath = await this.generateShareImage()
       return {
@@ -439,7 +471,7 @@ export default {
   async onShareTimeline(res) {
     const player1 = this.players[0]
     const player2 = this.players[1]
-
+    
     try {
       const imagePath = await this.generateShareImage()
       return {
@@ -474,6 +506,7 @@ export default {
   bottom: 0;
   z-index: 0;
 }
+
 
 
 .header {

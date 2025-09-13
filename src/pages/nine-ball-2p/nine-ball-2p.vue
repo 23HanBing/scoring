@@ -2,7 +2,7 @@
   <view class="container">
     <!-- 背景 -->
     <view class="background"></view>
-
+    
     <!-- 顶部信息栏 -->
     <view class="header">
       <view class="game-info">
@@ -18,14 +18,14 @@
         </button>
       </view>
     </view>
-
+    
     <!-- 比分显示 -->
     <view class="score-board">
-      <view
-          v-for="(player, index) in players"
-          :key="player.id"
-          class="player-score"
-          :class="{
+      <view 
+        v-for="(player, index) in players" 
+        :key="player.id"
+        class="player-score"
+        :class="{ 
           winner: player && targetScore > 0 && Math.abs(player.score || 0) >= targetScore && (player.score || 0) > 0,
           loser: player && targetScore > 0 && Math.abs(player.score || 0) >= targetScore && (player.score || 0) < 0,
           leading: player && (player.score || 0) > 0
@@ -36,8 +36,7 @@
         </view>
         <view class="player-info">
           <text class="player-name">{{ player?.name || '玩家' }}</text>
-          <text class="player-status"
-                :class="{ positive: (player?.score || 0) > 0, negative: (player?.score || 0) < 0 }">
+          <text class="player-status" :class="{ positive: (player?.score || 0) > 0, negative: (player?.score || 0) < 0 }">
             {{ (player?.score || 0) > 0 ? '领先' : (player?.score || 0) < 0 ? '落后' : '平局' }}
           </text>
           <view class="player-stats">
@@ -48,27 +47,26 @@
           </view>
         </view>
         <view class="score-display">
-          <text class="score-number"
-                :class="{ positive: (player?.score || 0) > 0, negative: (player?.score || 0) < 0 }">
+          <text class="score-number" :class="{ positive: (player?.score || 0) > 0, negative: (player?.score || 0) < 0 }">
             {{ (player?.score || 0) > 0 ? '+' : '' }}{{ player?.score || 0 }}
           </text>
           <text class="score-label">分</text>
         </view>
       </view>
     </view>
-
+    
     <!-- 零和提示 -->
     <view class="zero-sum-tip">
       <text class="tip-text">💡 总分恒为0：{{ (players[0]?.score || 0) + (players[1]?.score || 0) }}</text>
     </view>
-
+    
     <!-- 计分按钮区域 -->
     <view class="scoring-area" v-if="!gameFinished">
       <view class="player-actions">
-        <view
-            v-for="(player, index) in players"
-            :key="player.id"
-            class="player-section"
+        <view 
+          v-for="(player, index) in players" 
+          :key="player.id"
+          class="player-section"
         >
           <view class="player-header">
             <view class="player-avatar-small" :class="`player-${index + 1}`">
@@ -76,37 +74,37 @@
             </view>
             <text class="player-name-small">{{ player?.name || '玩家' }}</text>
           </view>
-
+          
           <view class="score-buttons">
-            <button
-                class="score-btn big-gold"
-                @tap="scorePoint(player.id, 'big-gold', 10)"
+            <button 
+              class="score-btn big-gold"
+              @tap="scorePoint(player.id, 'big-gold', 10)"
             >
               <text class="btn-title">大金</text>
               <text class="btn-score">+10分</text>
             </button>
-
-            <button
-                class="score-btn small-gold"
-                @tap="scorePoint(player.id, 'small-gold', 7)"
+            
+            <button 
+              class="score-btn small-gold"
+              @tap="scorePoint(player.id, 'small-gold', 7)"
             >
               <text class="btn-title">小金</text>
               <text class="btn-score">+7分</text>
             </button>
-
-            <button
-                class="score-btn normal-win"
-                @tap="scorePoint(player.id, 'normal', 4)"
+            
+            <button 
+              class="score-btn normal-win"
+              @tap="scorePoint(player.id, 'normal', 4)"
             >
               <text class="btn-title">普胜</text>
               <text class="btn-score">+4分</text>
             </button>
           </view>
-
+          
           <view class="penalty-section">
-            <button
-                class="penalty-btn"
-                @tap="penaltyPoint(player.id, 'foul', -1)"
+            <button 
+              class="penalty-btn"
+              @tap="penaltyPoint(player.id, 'foul', -1)"
             >
               <text class="penalty-title">犯规</text>
               <text class="penalty-score">-1分</text>
@@ -115,7 +113,7 @@
         </view>
       </view>
     </view>
-
+    
     <!-- 游戏结束界面 -->
     <view class="game-over" v-if="gameFinished">
       <view class="winner-section">
@@ -128,7 +126,7 @@
           <text class="winner-score">{{ getWinner().score }}分获胜</text>
         </view>
       </view>
-
+      
       <view class="game-actions">
         <button class="action-button restart" @tap="restartGame">
           <text class="action-text">重新开始</text>
@@ -138,14 +136,14 @@
         </button>
       </view>
     </view>
-
+    
     <!-- 撤销按钮 -->
     <view class="undo-section" v-if="gameHistory.length > 0 && !gameFinished">
       <button class="undo-btn" @tap="undoLastScore">
         <text class="undo-text">↶ 撤销上一步</text>
       </button>
     </view>
-
+    
     <!-- 历史记录弹窗 -->
     <view class="history-modal" v-if="showHistoryModal" @tap="hideHistory">
       <view class="history-content" @tap.stop>
@@ -154,10 +152,10 @@
           <button class="close-btn" @tap="hideHistory">×</button>
         </view>
         <scroll-view class="history-list" scroll-y>
-          <view
-              v-for="(record, index) in gameHistory"
-              :key="index"
-              class="history-item"
+          <view 
+            v-for="(record, index) in gameHistory" 
+            :key="index"
+            class="history-item"
           >
             <text class="history-player">{{ record.playerName }}</text>
             <text class="history-detail">{{ getActionName(record.type) }}</text>
@@ -168,11 +166,11 @@
         </scroll-view>
       </view>
     </view>
-
+    
     <!-- 隐藏的canvas用于截图 -->
-    <canvas
-        canvas-id="shareCanvas"
-        :style="{ width: canvasWidth + 'px', height: canvasHeight + 'px', position: 'absolute', left: '-9999px', top: '-9999px' }"
+    <canvas 
+      canvas-id="shareCanvas" 
+      :style="{ width: canvasWidth + 'px', height: canvasHeight + 'px', position: 'absolute', left: '-9999px', top: '-9999px' }"
     ></canvas>
   </view>
 </template>
@@ -220,67 +218,67 @@ export default {
       } else {
         // 默认数据
         this.players = [
-          {id: 1, name: '玩家1', score: 0, bigGoldCount: 0, smallGoldCount: 0, normalWinCount: 0, foulCount: 0},
-          {id: 2, name: '玩家2', score: 0, bigGoldCount: 0, smallGoldCount: 0, normalWinCount: 0, foulCount: 0}
+          { id: 1, name: '玩家1', score: 0, bigGoldCount: 0, smallGoldCount: 0, normalWinCount: 0, foulCount: 0 },
+          { id: 2, name: '玩家2', score: 0, bigGoldCount: 0, smallGoldCount: 0, normalWinCount: 0, foulCount: 0 }
         ]
         this.targetScore = 100
       }
     },
-
+    
     scorePoint(playerId, type, score) {
       const player = this.players.find(p => p.id === playerId)
       const opponent = this.players.find(p => p.id !== playerId)
       if (!player || !opponent) return
-
+      
       // 批量更新策略
       const updates = this.calculatePlayerUpdates(playerId, type, score, false)
       this.applyPlayerUpdates(updates)
-
+      
       // 记录历史到非响应式属性
       this.recordPlayerHistory(updates.historyRecord)
-
+      
       // 检查是否游戏结束
       if (this.targetScore > 0 && Math.abs(updates.players[0].score || 0) >= this.targetScore) {
         this.finishGame()
       }
-
+      
       // 保存游戏状态
       this.saveGameState()
     },
-
+    
     penaltyPoint(playerId, type, penalty) {
       const player = this.players.find(p => p.id === playerId)
       const opponent = this.players.find(p => p.id !== playerId)
       if (!player || !opponent) return
-
+      
       // 批量更新策略
       const updates = this.calculatePlayerUpdates(playerId, type, penalty, true)
       this.applyPlayerUpdates(updates)
-
+      
       // 记录历史到非响应式属性
       this.recordPlayerHistory(updates.historyRecord)
-
+      
       // 检查是否游戏结束
       const maxScore = Math.max(Math.abs(updates.players[0].score || 0), Math.abs(updates.players[1].score || 0))
       if (this.targetScore > 0 && maxScore >= this.targetScore) {
         this.finishGame()
       }
-
+      
       // 保存游戏状态
       this.saveGameState()
     },
-
+    
     undoLastScore() {
       if (this.gameHistory.length === 0) return
-
+      
       const lastRecord = this.gameHistory.pop()
       const player = this.players.find(p => p.id === lastRecord.playerId)
-
+      
       // 恢复之前的分数
       this.players.forEach(player => {
         player.score = lastRecord.beforeScores[player.id]
       })
-
+      
       // 回退统计数据
       if (player) {
         if (lastRecord.type === 'big-gold' && player.bigGoldCount > 0) {
@@ -293,20 +291,20 @@ export default {
           player.foulCount -= 1
         }
       }
-
+      
       this.saveGameState()
     },
-
+    
     getWinner() {
-      return this.players.find(player => player && (player.score || 0) >= this.targetScore) ||
-          this.players.reduce((prev, current) => ((prev?.score || 0) > (current?.score || 0)) ? prev : current)
+      return this.players.find(player => player && (player.score || 0) >= this.targetScore) || 
+              this.players.reduce((prev, current) => ((prev?.score || 0) > (current?.score || 0)) ? prev : current)
     },
-
+    
     getWinnerIndex() {
       const winner = this.getWinner()
       return this.players.findIndex(player => player.id === winner.id)
     },
-
+    
     finishGame() {
       const winner = this.getWinner()
       uni.showToast({
@@ -314,7 +312,7 @@ export default {
         icon: 'success'
       })
     },
-
+    
     restartGame() {
       this.players.forEach(player => {
         player.score = 0
@@ -326,7 +324,7 @@ export default {
       this.gameHistory = []
       this.saveGameState()
     },
-
+    
     resetGame() {
       uni.showModal({
         title: '重置比赛',
@@ -338,7 +336,7 @@ export default {
         }
       })
     },
-
+    
     goHome() {
       uni.reLaunch({
         url: '/pages/index/index',
@@ -346,15 +344,15 @@ export default {
         animationDuration: 300
       })
     },
-
+    
     showHistory() {
       this.showHistoryModal = true
     },
-
+    
     hideHistory() {
       this.showHistoryModal = false
     },
-
+    
     getActionName(type) {
       const names = {
         'big-gold': '大金',
@@ -364,7 +362,7 @@ export default {
       }
       return names[type] || type
     },
-
+    
     saveGameState() {
       const gameState = {
         players: this.players,
@@ -373,22 +371,22 @@ export default {
       }
       uni.setStorageSync('nineBall2pGameState', gameState)
     },
-
+    
     // 计算玩家更新 - 避免直接操作响应式数据
     calculatePlayerUpdates(playerId, type, score, isPenalty) {
       const updates = {
         players: [...this.players], // 浅拷贝避免直接修改
         historyRecord: null
       }
-
+      
       const player = updates.players.find(p => p.id === playerId)
       const opponent = updates.players.find(p => p.id !== playerId)
-
+      
       if (isPenalty) {
         // 犯规逻辑：一方犯规失分，另一方得分
         player.score += score // score是负数
         opponent.score -= score // 对手得分
-
+        
         if (type === 'foul') {
           player.foulCount += 1
         }
@@ -396,7 +394,7 @@ export default {
         // 得分逻辑：零和游戏，一方得分，另一方失分
         player.score += score
         opponent.score -= score
-
+        
         // 更新统计数据
         if (type === 'big-gold') {
           player.bigGoldCount += 1
@@ -406,7 +404,7 @@ export default {
           player.normalWinCount += 1
         }
       }
-
+      
       updates.historyRecord = {
         playerId,
         playerName: player.name,
@@ -418,47 +416,47 @@ export default {
           [opponent.id]: this.players.find(p => p.id !== playerId).score
         }
       }
-
+      
       return updates
     },
-
+    
     // 应用玩家更新 - 一次性更新所有数据
     applyPlayerUpdates(updates) {
       this.players = updates.players
     },
-
+    
     // 记录玩家历史到非响应式属性
     recordPlayerHistory(historyRecord) {
       this.gameHistory.push(historyRecord)
     },
-
+    
     // 生成页面截图用于分享
     async generateShareImage() {
       return new Promise((resolve, reject) => {
         const ctx = uni.createCanvasContext('shareCanvas', this)
-
+        
         // 设置canvas尺寸
         const canvasW = this.canvasWidth
         const canvasH = this.canvasHeight
-
+        
         // 绘制背景
         ctx.setFillStyle('#1565C0')
         ctx.fillRect(0, 0, canvasW, canvasH)
-
+        
         // 绘制标题
         ctx.setFillStyle('#ffffff')
         ctx.setFontSize(24)
         ctx.setTextAlign('center')
         ctx.fillText('九球二人追分', canvasW / 2, 60)
-
+        
         // 绘制目标分数
         ctx.setFontSize(16)
         ctx.fillText(`目标: ${this.targetScore === 0 ? '无限制' : this.targetScore + '分'}`, canvasW / 2, 90)
-
+        
         // 绘制玩家信息
         const player1 = this.players[0]
         const player2 = this.players[1]
-
+        
         // 玩家1
         ctx.setFillStyle('#FF5722')
         ctx.fillRect(30, 150, 120, 120)
@@ -466,14 +464,14 @@ export default {
         ctx.setFontSize(18)
         ctx.setTextAlign('center')
         ctx.fillText('1', 90, 220)
-
+        
         ctx.setTextAlign('left')
         ctx.setFontSize(16)
         ctx.fillText(player1.name, 170, 180)
         ctx.setFillStyle(player1.score > 0 ? '#4CAF50' : player1.score < 0 ? '#f44336' : '#ffffff')
         ctx.setFontSize(32)
         ctx.fillText(player1.score.toString(), 170, 220)
-
+        
         // 玩家2
         ctx.setFillStyle('#2196F3')
         ctx.fillRect(30, 300, 120, 120)
@@ -481,29 +479,29 @@ export default {
         ctx.setFontSize(18)
         ctx.setTextAlign('center')
         ctx.fillText('2', 90, 370)
-
+        
         ctx.setTextAlign('left')
         ctx.setFontSize(16)
         ctx.fillText(player2.name, 170, 330)
         ctx.setFillStyle(player2.score > 0 ? '#4CAF50' : player2.score < 0 ? '#f44336' : '#ffffff')
         ctx.setFontSize(32)
         ctx.fillText(player2.score.toString(), 170, 370)
-
+        
         // 绘制统计信息
         ctx.setFillStyle('#ffffff')
         ctx.setFontSize(14)
         ctx.fillText(`大金: ${player1.bigGoldCount} 小金: ${player1.smallGoldCount}`, 170, 250)
         ctx.fillText(`普胜: ${player1.normalWinCount} 犯规: ${player1.foulCount}`, 170, 270)
-
+        
         ctx.fillText(`大金: ${player2.bigGoldCount} 小金: ${player2.smallGoldCount}`, 170, 400)
         ctx.fillText(`普胜: ${player2.normalWinCount} 犯规: ${player2.foulCount}`, 170, 420)
-
+        
         // 绘制时间戳
         ctx.setFontSize(12)
         ctx.setTextAlign('center')
         ctx.fillText(new Date().toLocaleString(), canvasW / 2, canvasH - 30)
-
-        ctx.draw(false, (() => {
+        
+        ctx.draw(false, () => {
           setTimeout(() => {
             uni.canvasToTempFilePath({
               canvasId: 'shareCanvas',
@@ -521,7 +519,7 @@ export default {
               }
             }, this)
           }, 500)
-        }))
+        })()
       })
     }
   },
@@ -529,7 +527,7 @@ export default {
   async onShareAppMessage(res) {
     const player1 = this.players[0]
     const player2 = this.players[1]
-
+    
     try {
       const imagePath = await this.generateShareImage()
       return {
@@ -550,7 +548,7 @@ export default {
   async onShareTimeline(res) {
     const player1 = this.players[0]
     const player2 = this.players[1]
-
+    
     try {
       const imagePath = await this.generateShareImage()
       return {
@@ -585,6 +583,7 @@ export default {
   bottom: 0;
   z-index: 0;
 }
+
 
 
 .header {
@@ -871,6 +870,7 @@ export default {
 }
 
 
+
 .btn-title {
   font-size: 28rpx;
   font-weight: bold;
@@ -900,6 +900,7 @@ export default {
   justify-content: center;
   box-shadow: 0 1rpx 4rpx rgba(0, 0, 0, 0.1);
 }
+
 
 
 .penalty-title {
@@ -993,6 +994,7 @@ export default {
   background: #607D8B;
   color: #FFFFFF;
 }
+
 
 
 .action-text {

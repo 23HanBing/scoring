@@ -2,7 +2,7 @@
   <view class="container">
     <!-- 背景 -->
     <view class="background"></view>
-
+    
     <!-- 顶部信息栏 -->
     <view class="header">
       <view class="game-info">
@@ -18,14 +18,14 @@
         </button>
       </view>
     </view>
-
+    
     <!-- 比分显示 -->
     <view class="score-board">
-      <view
-          v-for="(player, index) in players"
-          :key="player.id"
-          class="player-score"
-          :class="{
+      <view 
+        v-for="(player, index) in players" 
+        :key="player.id"
+        class="player-score"
+        :class="{ 
           winner: player && targetScore > 0 && Math.abs(player.score || 0) >= targetScore && (player.score || 0) > 0,
           loser: player && targetScore > 0 && Math.abs(player.score || 0) >= targetScore && (player.score || 0) < 0,
           leading: player && (player.score || 0) > 0 && (player.score || 0) === Math.max(...players.filter(p => p).map(p => p.score || 0))
@@ -36,8 +36,7 @@
         </view>
         <view class="player-info">
           <text class="player-name">{{ player?.name || '玩家' }}</text>
-          <text class="player-status"
-                :class="{ positive: (player?.score || 0) > 0, negative: (player?.score || 0) < 0 }">
+          <text class="player-status" :class="{ positive: (player?.score || 0) > 0, negative: (player?.score || 0) < 0 }">
             {{ (player?.score || 0) > 0 ? '领先' : (player?.score || 0) < 0 ? '落后' : '平局' }}
           </text>
           <view class="player-stats">
@@ -48,20 +47,19 @@
           </view>
         </view>
         <view class="score-display">
-          <text class="score-number"
-                :class="{ positive: (player?.score || 0) > 0, negative: (player?.score || 0) < 0 }">
+          <text class="score-number" :class="{ positive: (player?.score || 0) > 0, negative: (player?.score || 0) < 0 }">
             {{ (player?.score || 0) > 0 ? '+' : '' }}{{ player?.score || 0 }}
           </text>
           <text class="score-label">分</text>
         </view>
       </view>
     </view>
-
+    
     <!-- 零和提示 -->
     <view class="zero-sum-tip">
       <text class="tip-text">💡 三方总分恒为0：{{ players.reduce((sum, p) => sum + p.score, 0) }}</text>
     </view>
-
+    
     <!-- 计分选择模式 -->
     <view class="scoring-mode" v-if="!gameFinished">
       <!-- 胜局类计分 -->
@@ -70,49 +68,49 @@
           <text class="section-title">胜局计分</text>
           <text class="section-subtitle">选择赢方和输方</text>
         </view>
-
+        
         <view class="score-type-selection">
           <view class="score-type-row">
-            <button
-                class="score-type-btn big-gold"
-                @tap="selectScoreType('big-gold', 10)"
-                :class="{ active: selectedScoreType === 'big-gold' }"
+            <button 
+              class="score-type-btn big-gold"
+              @tap="selectScoreType('big-gold', 10)"
+              :class="{ active: selectedScoreType === 'big-gold' }"
             >
               <text class="type-title">大金</text>
               <text class="type-score">±10分</text>
             </button>
-
-            <button
-                class="score-type-btn small-gold"
-                @tap="selectScoreType('small-gold', 7)"
-                :class="{ active: selectedScoreType === 'small-gold' }"
+            
+            <button 
+              class="score-type-btn small-gold"
+              @tap="selectScoreType('small-gold', 7)"
+              :class="{ active: selectedScoreType === 'small-gold' }"
             >
               <text class="type-title">小金</text>
               <text class="type-score">±7分</text>
             </button>
-
-            <button
-                class="score-type-btn normal-win"
-                @tap="selectScoreType('normal', 4)"
-                :class="{ active: selectedScoreType === 'normal' }"
+            
+            <button 
+              class="score-type-btn normal-win"
+              @tap="selectScoreType('normal', 4)"
+              :class="{ active: selectedScoreType === 'normal' }"
             >
               <text class="type-title">普胜</text>
               <text class="type-score">±4分</text>
             </button>
           </view>
         </view>
-
+        
         <!-- 玩家选择区域 -->
         <view class="player-selection" v-if="selectedScoreType">
           <view class="selection-step">
             <text class="step-title">谁赢了？</text>
             <view class="player-options">
-              <view
-                  v-for="(player, index) in players"
-                  :key="'winner-' + player.id"
-                  class="player-option"
-                  :class="{ selected: selectedWinner === player.id }"
-                  @tap="selectWinner(player.id)"
+              <view 
+                v-for="(player, index) in players" 
+                :key="'winner-' + player.id"
+                class="player-option"
+                :class="{ selected: selectedWinner === player.id }"
+                @tap="selectWinner(player.id)"
               >
                 <view class="player-avatar-option" :class="`player-${index + 1}`">
                   <text class="avatar-number">{{ index + 1 }}</text>
@@ -121,67 +119,60 @@
               </view>
             </view>
           </view>
-
+          
           <view class="selection-step" v-if="selectedWinner && selectedScoreType !== 'big-gold'">
-            <text class="step-title">谁输了？</text>
-            <view class="player-options">
-              <view
-                  v-for="(player) in availableLosers"
-                  :key="'loser-' + player.id"
-                  class="player-option"
-                  :class="{ selected: selectedLoser === player.id }"
-                  @tap="selectLoser(player.id)"
-              >
-                <view class="player-avatar-option" :class="`player-${getPlayerIndex(player.id) + 1}`">
-                  <text class="avatar-number">{{ getPlayerIndex(player.id) + 1 }}</text>
-                </view>
-                <text class="player-name-option">{{ player.name }}</text>
-              </view>
-            </view>
-          </view>
-
-          <!-- 确认按钮 -->
-          <view class="confirm-section"
-                v-if="selectedWinner && (selectedScoreType === 'big-gold' || (selectedScoreType !== 'big-gold' && selectedLoser))">
-            <view class="score-preview" v-if="selectedScoreType === 'big-gold'">
-              <text class="preview-text">{{ getPlayerName(selectedWinner) }}获得{{
-                  selectedScore * 2
-                }}分，其他两人各失{{ selectedScore }}分
-              </text>
-            </view>
-            <view class="score-preview" v-else>
-              <text class="preview-text">{{ getPlayerName(selectedWinner) }}获得{{
-                  selectedScore
-                }}分，{{ getPlayerName(selectedLoser) }}失{{ selectedScore }}分
-              </text>
-            </view>
-            <button class="confirm-btn" @tap="confirmWinScore">
-              <text class="confirm-text">确认计分</text>
-            </button>
-            <button class="cancel-btn" @tap="resetSelection">
-              <text class="cancel-text">重新选择</text>
-            </button>
-          </view>
+             <text class="step-title">谁输了？</text>
+             <view class="player-options">
+               <view 
+                 v-for="(player) in availableLosers" 
+                 :key="'loser-' + player.id"
+                 class="player-option"
+                 :class="{ selected: selectedLoser === player.id }"
+                 @tap="selectLoser(player.id)"
+               >
+                 <view class="player-avatar-option" :class="`player-${getPlayerIndex(player.id) + 1}`">
+                   <text class="avatar-number">{{ getPlayerIndex(player.id) + 1 }}</text>
+                 </view>
+                 <text class="player-name-option">{{ player.name }}</text>
+               </view>
+             </view>
+           </view>
+           
+           <!-- 确认按钮 -->
+           <view class="confirm-section" v-if="selectedWinner && (selectedScoreType === 'big-gold' || (selectedScoreType !== 'big-gold' && selectedLoser))">
+             <view class="score-preview" v-if="selectedScoreType === 'big-gold'">
+               <text class="preview-text">{{ getPlayerName(selectedWinner) }}获得{{ selectedScore * 2 }}分，其他两人各失{{ selectedScore }}分</text>
+             </view>
+             <view class="score-preview" v-else>
+               <text class="preview-text">{{ getPlayerName(selectedWinner) }}获得{{ selectedScore }}分，{{ getPlayerName(selectedLoser) }}失{{ selectedScore }}分</text>
+             </view>
+             <button class="confirm-btn" @tap="confirmWinScore">
+               <text class="confirm-text">确认计分</text>
+             </button>
+             <button class="cancel-btn" @tap="resetSelection">
+               <text class="cancel-text">重新选择</text>
+             </button>
+           </view>
         </view>
       </view>
-
+      
       <!-- 犯规类计分 -->
       <view class="foul-section">
         <view class="section-header">
           <text class="section-title">犯规计分</text>
           <text class="section-subtitle">选择犯规方和被犯规方</text>
         </view>
-
+        
         <view class="foul-selection">
           <view class="selection-step">
             <text class="step-title">谁犯规了？</text>
             <view class="player-options">
-              <view
-                  v-for="(player, index) in players"
-                  :key="'foul-' + player.id"
-                  class="player-option foul-option"
-                  :class="{ selected: selectedFouler === player.id }"
-                  @tap="selectFouler(player.id)"
+              <view 
+                v-for="(player, index) in players" 
+                :key="'foul-' + player.id"
+                class="player-option foul-option"
+                :class="{ selected: selectedFouler === player.id }"
+                @tap="selectFouler(player.id)"
               >
                 <view class="player-avatar-option" :class="`player-${index + 1}`">
                   <text class="avatar-number">{{ index + 1 }}</text>
@@ -191,16 +182,16 @@
               </view>
             </view>
           </view>
-
+          
           <view class="selection-step" v-if="selectedFouler">
             <text class="step-title">谁被犯规了？</text>
             <view class="player-options">
-              <view
-                  v-for="(player) in availableFoulVictims"
-                  :key="'victim-' + player.id"
-                  class="player-option victim-option"
-                  :class="{ selected: selectedFoulVictim === player.id }"
-                  @tap="selectFoulVictim(player.id)"
+              <view 
+                v-for="(player) in availableFoulVictims" 
+                :key="'victim-' + player.id"
+                class="player-option victim-option"
+                :class="{ selected: selectedFoulVictim === player.id }"
+                @tap="selectFoulVictim(player.id)"
               >
                 <view class="player-avatar-option" :class="`player-${getPlayerIndex(player.id) + 1}`">
                   <text class="avatar-number">{{ getPlayerIndex(player.id) + 1 }}</text>
@@ -210,14 +201,11 @@
               </view>
             </view>
           </view>
-
+          
           <!-- 确认按钮 -->
           <view class="confirm-section" v-if="selectedFouler && selectedFoulVictim">
             <view class="score-preview">
-              <text class="preview-text">{{
-                  getPlayerName(selectedFouler)
-                }}犯规失1分，{{ getPlayerName(selectedFoulVictim) }}得1分
-              </text>
+              <text class="preview-text">{{ getPlayerName(selectedFouler) }}犯规失1分，{{ getPlayerName(selectedFoulVictim) }}得1分</text>
             </view>
             <button class="confirm-btn" @tap="confirmFoulScore">
               <text class="confirm-text">确认犯规</text>
@@ -229,7 +217,7 @@
         </view>
       </view>
     </view>
-
+    
     <!-- 游戏结束界面 -->
     <view class="game-over" v-if="gameFinished">
       <view class="winner-section">
@@ -242,7 +230,7 @@
           <text class="winner-score">{{ getWinner().score }}分获胜</text>
         </view>
       </view>
-
+      
       <view class="game-actions">
         <button class="action-button restart" @tap="restartGame">
           <text class="action-text">重新开始</text>
@@ -252,14 +240,14 @@
         </button>
       </view>
     </view>
-
+    
     <!-- 撤销按钮 -->
     <view class="undo-section" v-if="gameHistory.length > 0 && !gameFinished">
       <button class="undo-btn" @tap="undoLastScore">
         <text class="undo-text">↶ 撤销上一步</text>
       </button>
     </view>
-
+    
     <!-- 历史记录弹窗 -->
     <view class="history-modal" v-if="showHistoryModal" @tap="hideHistory">
       <view class="history-content" @tap.stop>
@@ -268,10 +256,10 @@
           <button class="close-btn" @tap="hideHistory">×</button>
         </view>
         <scroll-view class="history-list" scroll-y>
-          <view
-              v-for="(record, index) in gameHistory"
-              :key="index"
-              class="history-item"
+          <view 
+            v-for="(record, index) in gameHistory" 
+            :key="index"
+            class="history-item"
           >
             <text class="history-winner">{{ record.winnerName }}</text>
             <text class="history-detail">{{ getActionName(record.type) }}</text>
@@ -283,11 +271,11 @@
         </scroll-view>
       </view>
     </view>
-
+    
     <!-- 隐藏的canvas用于截图 -->
-    <canvas
-        canvas-id="shareCanvas"
-        :style="{ width: canvasWidth + 'px', height: canvasHeight + 'px', position: 'absolute', left: '-9999px', top: '-9999px' }"
+    <canvas 
+      canvas-id="shareCanvas" 
+      :style="{ width: canvasWidth + 'px', height: canvasHeight + 'px', position: 'absolute', left: '-9999px', top: '-9999px' }"
     ></canvas>
   </view>
 </template>
@@ -300,24 +288,24 @@ export default {
       players: [],
       targetScore: 100,
       showHistoryModal: false,
-
+      
       // 胜局类选择状态
       selectedScoreType: null,
       selectedScore: 0,
       selectedWinner: null,
       selectedLoser: null,
-
+      
       // 犯规类选择状态
       selectedFouler: null,
       selectedFoulVictim: null,
-
+      
       // canvas截图相关
       canvasWidth: 375,
       canvasHeight: 667,
       shareImagePath: ''
     }
   },
-
+  
   // 将渲染无关的数据移到组件实例上
   created() {
     // 游戏历史记录不需要响应式，移到实例属性
@@ -326,19 +314,19 @@ export default {
     this.cachedGameState = null
   },
   computed: {
-    gameFinished() {
-      if (this.targetScore === 0) return false // 无限制模式
-      return this.players.some(player => player && Math.abs(player.score || 0) >= this.targetScore)
-    },
-
-    availableLosers() {
-      return this.players.filter(p => p.id !== this.selectedWinner)
-    },
-
-    availableFoulVictims() {
-      return this.players.filter(p => p.id !== this.selectedFouler)
-    }
-  },
+        gameFinished() {
+          if (this.targetScore === 0) return false // 无限制模式
+          return this.players.some(player => player && Math.abs(player.score || 0) >= this.targetScore)
+        },
+        
+        availableLosers() {
+          return this.players.filter(p => p.id !== this.selectedWinner)
+        },
+        
+        availableFoulVictims() {
+          return this.players.filter(p => p.id !== this.selectedFouler)
+        }
+      },
   onLoad() {
     this.initGame()
   },
@@ -352,7 +340,7 @@ export default {
         this.targetScore = savedGameState.targetScore || 100
         return
       }
-
+      
       // 如果没有保存的状态，从房间设置加载
       const gameData = uni.getStorageSync('currentGame')
       if (gameData && gameData.mode === 'nine-ball-3p' && gameData.players && gameData.players.length > 0) {
@@ -371,52 +359,54 @@ export default {
       } else {
         // 默认数据
         this.players = [
-          {id: 1, name: '玩家1', score: 0, stats: {bigGold: 0, smallGold: 0, normal: 0, foul: 0}},
-          {id: 2, name: '玩家2', score: 0, stats: {bigGold: 0, smallGold: 0, normal: 0, foul: 0}},
-          {id: 3, name: '玩家3', score: 0, stats: {bigGold: 0, smallGold: 0, normal: 0, foul: 0}}
+          { id: 1, name: '玩家1', score: 0, stats: { bigGold: 0, smallGold: 0, normal: 0, foul: 0 } },
+          { id: 2, name: '玩家2', score: 0, stats: { bigGold: 0, smallGold: 0, normal: 0, foul: 0 } },
+          { id: 3, name: '玩家3', score: 0, stats: { bigGold: 0, smallGold: 0, normal: 0, foul: 0 } }
         ]
         this.targetScore = 100
       }
     },
+    
 
-
+    
     checkGameEnd() {
       if (this.targetScore === 0) return false // 无限制模式永不结束
       return this.players.some(player => player && Math.abs(player.score || 0) >= this.targetScore)
     },
-
+    
     undoLastScore() {
       if (this.gameHistory.length === 0) return
-
+      
       const lastRecord = this.gameHistory.pop()
-
+      
       // 恢复之前的分数和统计数据
       this.players.forEach(player => {
         player.score = lastRecord.beforeScores[player.id]
         if (lastRecord.beforeStats && lastRecord.beforeStats[player.id]) {
-          player.stats = {...lastRecord.beforeStats[player.id]}
+          player.stats = { ...lastRecord.beforeStats[player.id] }
         }
       })
-
+      
       this.saveGameState()
     },
-
+    
     getWinner() {
       if (this.targetScore === 0) {
         // 无限制模式，返回分数最高的玩家
         return this.players.reduce((prev, current) => ((prev?.score || 0) > (current?.score || 0)) ? prev : current)
       }
       // 有目标分数时，返回达到目标分数的玩家，或分数最高的玩家
-      return this.players.find(player => player && Math.abs(player.score || 0) >= this.targetScore) ||
-          this.players.reduce((prev, current) => ((prev?.score || 0) > (current?.score || 0)) ? prev : current)
+      return this.players.find(player => player && Math.abs(player.score || 0) >= this.targetScore) || 
+              this.players.reduce((prev, current) => ((prev?.score || 0) > (current?.score || 0)) ? prev : current)
     },
-
+    
     getWinnerIndex() {
       const winner = this.getWinner()
       return this.players.findIndex(player => player.id === winner.id)
     },
+    
 
-
+    
     finishGame() {
       const winner = this.getWinner()
       uni.showToast({
@@ -424,7 +414,7 @@ export default {
         icon: 'success'
       })
     },
-
+    
     restartGame() {
       this.players.forEach(player => {
         player.score = 0
@@ -436,7 +426,7 @@ export default {
         }
       })
       this.gameHistory = []
-
+      
       // 重置选择状态
       this.selectedScoreType = null
       this.selectedScore = 0
@@ -447,7 +437,7 @@ export default {
 
       this.saveGameState()
     },
-
+    
     resetGame() {
       uni.showModal({
         title: '重置比赛',
@@ -459,21 +449,21 @@ export default {
         }
       })
     },
-
+    
     goHome() {
       uni.reLaunch({
         url: '/pages/index/index'
       })
     },
-
+    
     showHistory() {
       this.showHistoryModal = true
     },
-
+    
     hideHistory() {
       this.showHistoryModal = false
     },
-
+    
     getActionName(type) {
       const names = {
         'big-gold': '大金',
@@ -483,7 +473,7 @@ export default {
       }
       return names[type] || type
     },
-
+    
     saveGameState() {
       const gameState = {
         players: this.players,
@@ -492,7 +482,7 @@ export default {
       }
       uni.setStorageSync('nineBall3pGameState', gameState)
     },
-
+    
     // 选择计分类型
     selectScoreType(type, score) {
       this.selectedScoreType = type
@@ -501,117 +491,117 @@ export default {
       this.selectedWinner = null
       this.selectedLoser = null
     },
-
+    
     // 选择赢家
     selectWinner(playerId) {
       this.selectedWinner = playerId
       this.selectedLoser = null
     },
-
+    
     // 选择输家
-    selectLoser(playerId) {
-      this.selectedLoser = playerId
-    },
-
-    // 获取玩家名称
-    getPlayerName(playerId) {
-      const player = this.players.find(p => p.id === playerId)
-      return player ? player.name : '玩家'
-    },
-
+     selectLoser(playerId) {
+       this.selectedLoser = playerId
+     },
+     
+     // 获取玩家名称
+     getPlayerName(playerId) {
+       const player = this.players.find(p => p.id === playerId)
+       return player ? player.name : '玩家'
+     },
+    
     // 确认胜局计分 - 优化版本，减少频繁更新
-    confirmWinScore() {
-      if (!this.selectedWinner || !this.selectedScore) return
-      if (this.selectedScoreType !== 'big-gold' && !this.selectedLoser) return
-
-      // 批量更新策略：先计算所有变更，再一次性应用
-      const updates = this.calculateScoreUpdates()
-      this.applyScoreUpdates(updates)
-
-      // 记录历史到非响应式属性
-      this.recordGameHistory(updates)
-
-      this.resetSelection()
-      this.saveGameState()
-
-      if (this.checkGameEnd()) {
-        this.finishGame()
-      }
-    },
-
-    // 计算分数更新 - 避免直接操作响应式数据
-    calculateScoreUpdates() {
-      const winner = this.players.find(p => p.id === this.selectedWinner)
-      const updates = {
-        players: [...this.players], // 浅拷贝避免直接修改
-        historyRecord: null
-      }
-
-      if (this.selectedScoreType === 'big-gold') {
-        // 大金逻辑
-        const totalScore = this.selectedScore * 2
-        const losers = updates.players.filter(p => p.id !== this.selectedWinner)
-        const lossPerPlayer = totalScore / losers.length
-
-        updates.players.forEach(player => {
-          if (player.id === this.selectedWinner) {
-            player.score += totalScore
-            player.stats.bigGold += 1
-          } else {
-            player.score -= lossPerPlayer
-          }
-        })
-
-        updates.historyRecord = {
-          winnerId: this.selectedWinner,
-          winnerName: winner.name,
-          loserIds: losers.map(p => p.id),
-          loserNames: losers.map(p => p.name),
-          type: this.selectedScoreType,
-          score: this.selectedScore,
-          timestamp: Date.now()
+      confirmWinScore() {
+        if (!this.selectedWinner || !this.selectedScore) return
+        if (this.selectedScoreType !== 'big-gold' && !this.selectedLoser) return
+        
+        // 批量更新策略：先计算所有变更，再一次性应用
+        const updates = this.calculateScoreUpdates()
+        this.applyScoreUpdates(updates)
+        
+        // 记录历史到非响应式属性
+        this.recordGameHistory(updates)
+        
+        this.resetSelection()
+        this.saveGameState()
+        
+        if (this.checkGameEnd()) {
+          this.finishGame()
         }
-      } else {
-        // 小金和普胜逻辑
-        const loser = this.players.find(p => p.id === this.selectedLoser)
-
-        updates.players.forEach(player => {
-          if (player.id === this.selectedWinner) {
-            player.score += this.selectedScore
-            if (this.selectedScoreType === 'small-gold') {
-              player.stats.smallGold += 1
-            } else if (this.selectedScoreType === 'normal') {
-              player.stats.normal += 1
+      },
+      
+      // 计算分数更新 - 避免直接操作响应式数据
+      calculateScoreUpdates() {
+        const winner = this.players.find(p => p.id === this.selectedWinner)
+        const updates = {
+          players: [...this.players], // 浅拷贝避免直接修改
+          historyRecord: null
+        }
+        
+        if (this.selectedScoreType === 'big-gold') {
+          // 大金逻辑
+          const totalScore = this.selectedScore * 2
+          const losers = updates.players.filter(p => p.id !== this.selectedWinner)
+          const lossPerPlayer = totalScore / losers.length
+          
+          updates.players.forEach(player => {
+            if (player.id === this.selectedWinner) {
+              player.score += totalScore
+              player.stats.bigGold += 1
+            } else {
+              player.score -= lossPerPlayer
             }
-          } else if (player.id === this.selectedLoser) {
-            player.score -= this.selectedScore
+          })
+          
+          updates.historyRecord = {
+            winnerId: this.selectedWinner,
+            winnerName: winner.name,
+            loserIds: losers.map(p => p.id),
+            loserNames: losers.map(p => p.name),
+            type: this.selectedScoreType,
+            score: this.selectedScore,
+            timestamp: Date.now()
           }
-        })
-
-        updates.historyRecord = {
-          winnerId: this.selectedWinner,
-          winnerName: winner.name,
-          loserIds: [this.selectedLoser],
-          loserNames: [loser.name],
-          type: this.selectedScoreType,
-          score: this.selectedScore,
-          timestamp: Date.now()
+        } else {
+          // 小金和普胜逻辑
+          const loser = this.players.find(p => p.id === this.selectedLoser)
+          
+          updates.players.forEach(player => {
+            if (player.id === this.selectedWinner) {
+              player.score += this.selectedScore
+              if (this.selectedScoreType === 'small-gold') {
+                player.stats.smallGold += 1
+              } else if (this.selectedScoreType === 'normal') {
+                player.stats.normal += 1
+              }
+            } else if (player.id === this.selectedLoser) {
+              player.score -= this.selectedScore
+            }
+          })
+          
+          updates.historyRecord = {
+            winnerId: this.selectedWinner,
+            winnerName: winner.name,
+            loserIds: [this.selectedLoser],
+            loserNames: [loser.name],
+            type: this.selectedScoreType,
+            score: this.selectedScore,
+            timestamp: Date.now()
+          }
         }
-      }
-
-      return updates
-    },
-
-    // 应用分数更新 - 一次性更新所有数据
-    applyScoreUpdates(updates) {
-      this.players = updates.players
-    },
-
-    // 记录游戏历史到非响应式属性
-    recordGameHistory(updates) {
-      this.gameHistory.push(updates.historyRecord)
-    },
-
+        
+        return updates
+      },
+      
+      // 应用分数更新 - 一次性更新所有数据
+      applyScoreUpdates(updates) {
+        this.players = updates.players
+      },
+      
+      // 记录游戏历史到非响应式属性
+      recordGameHistory(updates) {
+        this.gameHistory.push(updates.historyRecord)
+      },
+    
     // 重置胜局选择
     resetSelection() {
       this.selectedScoreType = null
@@ -619,26 +609,27 @@ export default {
       this.selectedWinner = null
       this.selectedLoser = null
     },
-
+    
     // 选择犯规者
     selectFouler(playerId) {
       this.selectedFouler = playerId
       this.selectedFoulVictim = null
     },
-
+    
     // 选择被犯规者
     selectFoulVictim(playerId) {
       this.selectedFoulVictim = playerId
     },
+    
 
-
+    
     // 确认犯规计分
     confirmFoulScore() {
       if (!this.selectedFouler || !this.selectedFoulVictim) return
-
+      
       const fouler = this.players.find(p => p.id === this.selectedFouler)
       const victim = this.players.find(p => p.id === this.selectedFoulVictim)
-
+      
       // 记录历史
       this.gameHistory.push({
         winnerId: this.selectedFoulVictim,
@@ -653,99 +644,99 @@ export default {
           return acc
         }, {}),
         beforeStats: this.players.reduce((acc, p) => {
-          acc[p.id] = {...p.stats}
+          acc[p.id] = { ...p.stats }
           return acc
         }, {})
       })
-
+      
       // 计分：犯规者失1分，被犯规者得1分，第三人不变
       fouler.score -= 1
       victim.score += 1
-
+      
       // 更新统计：犯规者犯规+1
       fouler.stats.foul += 1
-
+      
       this.resetFoulSelection()
       this.saveGameState()
-
+      
       if (this.checkGameEnd()) {
         this.finishGame()
       }
     },
-
+    
     // 重置犯规选择
     resetFoulSelection() {
       this.selectedFouler = null
       this.selectedFoulVictim = null
     },
-
+    
     // 获取玩家索引
     getPlayerIndex(playerId) {
       return this.players.findIndex(p => p.id === playerId)
     },
-
+    
     // 生成页面截图用于分享 <mcreference link="https://www.cnblogs.com/dongzhi1111/p/14044739.html" index="1">1</mcreference> <mcreference link="https://uniapp.dcloud.net.cn/api/canvas/canvasToTempFilePath.html" index="2">2</mcreference>
     async generateShareImage() {
       return new Promise((resolve, reject) => {
         const ctx = uni.createCanvasContext('shareCanvas', this)
-
+        
         // 设置canvas尺寸
         const canvasW = this.canvasWidth
         const canvasH = this.canvasHeight
-
+        
         // 绘制背景
         ctx.setFillStyle('#6A1B9A')
         ctx.fillRect(0, 0, canvasW, canvasH)
-
+        
         // 绘制标题
         ctx.setFillStyle('#ffffff')
         ctx.setFontSize(24)
         ctx.setTextAlign('center')
         ctx.fillText('九球三人对局', canvasW / 2, 50)
-
+        
         // 绘制目标分数
         ctx.setFontSize(16)
         ctx.fillText(`目标: ${this.targetScore === 0 ? '无限制' : this.targetScore + '分'}`, canvasW / 2, 80)
-
+        
         // 绘制三个玩家信息
         const colors = ['#FF5722', '#2196F3', '#4CAF50']
         const yPositions = [130, 250, 370]
-
+        
         this.players.forEach((player, index) => {
           const y = yPositions[index]
-
+          
           // 玩家头像背景
           ctx.setFillStyle(colors[index])
           ctx.fillRect(30, y, 80, 80)
-
+          
           // 玩家编号
           ctx.setFillStyle('#ffffff')
           ctx.setFontSize(18)
           ctx.setTextAlign('center')
           ctx.fillText((index + 1).toString(), 70, y + 50)
-
+          
           // 玩家姓名
           ctx.setTextAlign('left')
           ctx.setFontSize(16)
           ctx.fillText(player.name, 130, y + 25)
-
+          
           // 玩家分数
           ctx.setFillStyle(player.score > 0 ? '#4CAF50' : player.score < 0 ? '#f44336' : '#ffffff')
           ctx.setFontSize(28)
           ctx.fillText(player.score.toString(), 130, y + 55)
-
+          
           // 统计信息
           ctx.setFillStyle('#ffffff')
           ctx.setFontSize(12)
           ctx.fillText(`大金:${player.bigGoldCount} 小金:${player.smallGoldCount} 普胜:${player.normalWinCount}`, 130, y + 75)
         })
-
+        
         // 绘制时间戳
         ctx.setFontSize(12)
         ctx.setTextAlign('center')
         ctx.fillText(new Date().toLocaleString(), canvasW / 2, canvasH - 30)
-
-        ctx.draw(false, (() => {
+        
+        ctx.draw(false, () => {
           setTimeout(() => {
             uni.canvasToTempFilePath({
               canvasId: 'shareCanvas',
@@ -763,14 +754,14 @@ export default {
               }
             }, this)
           }, 500)
-        }))
+        })()
       })
     }
   },
   // 转发给好友
   async onShareAppMessage(res) {
     const scores = this.players.map(p => `${p.name}:${p.score}`).join(' | ')
-
+    
     try {
       const imagePath = await this.generateShareImage()
       return {
@@ -790,7 +781,7 @@ export default {
   // 分享到朋友圈
   async onShareTimeline(res) {
     const scores = this.players.map(p => `${p.name}:${p.score}`).join(' | ')
-
+    
     try {
       const imagePath = await this.generateShareImage()
       return {
@@ -826,6 +817,8 @@ export default {
   z-index: 0;
 }
 
+
+    
 
 .header {
   display: flex;

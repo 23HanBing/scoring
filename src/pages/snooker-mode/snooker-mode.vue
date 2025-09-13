@@ -22,11 +22,11 @@
           <text class="section-title">玩家信息</text>
           <view class="form-item">
             <text class="label">玩家1</text>
-            <input class="input" v-model="playerA" placeholder="输入玩家1名称"/>
+            <input class="input" v-model="playerA" placeholder="输入玩家1名称" />
           </view>
           <view class="form-item">
             <text class="label">玩家2</text>
-            <input class="input" v-model="playerB" placeholder="输入玩家2名称"/>
+            <input class="input" v-model="playerB" placeholder="输入玩家2名称" />
           </view>
         </view>
 
@@ -42,11 +42,11 @@
           </view>
           <view class="form-item switch-item">
             <text class="label">Miss 提示</text>
-            <switch :checked="missHint" @change="e=>missHint=e.detail.value"/>
+            <switch :checked="missHint" @change="e=>missHint=e.detail.value" />
           </view>
           <view class="form-item switch-item">
             <text class="label">Free Ball 指引</text>
-            <switch :checked="freeBallGuide" @change="e=>freeBallGuide=e.detail.value"/>
+            <switch :checked="freeBallGuide" @change="e=>freeBallGuide=e.detail.value" />
           </view>
         </view>
       </view>
@@ -71,14 +71,12 @@ export default {
     }
   },
   onShow() {
-    setTimeout(() => {
-      this.isLoading = false
-    }, 100)
+    setTimeout(() => { this.isLoading = false }, 100)
   },
   methods: {
     startGame() {
       if (!this.playerA || !this.playerB) {
-        uni.showToast({title: '请填写玩家姓名', icon: 'none'})
+        uni.showToast({ title: '请填写玩家姓名', icon: 'none' })
         return
       }
       // 先将设置缓存到本地，后续由对局页读取（纯前端）
@@ -116,166 +114,31 @@ export default {
 </script>
 
 <style scoped>
-.container {
-  min-height: 100vh;
-  background: #424242;
-  position: relative
-}
-
-.header {
-  text-align: center;
-  padding: 80rpx 0 40rpx;
-  position: relative;
-  z-index: 1
-}
-
-.title {
-  display: block;
-  font-size: 52rpx;
-  font-weight: bold;
-  color: #FFF;
-  margin-bottom: 12rpx;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, .3)
-}
-
-.subtitle {
-  display: block;
-  font-size: 26rpx;
-  color: rgba(255, 255, 255, .8);
-  line-height: 1.4
-}
-
-.form-container {
-  padding: 0 40rpx;
-  position: relative;
-  z-index: 1
-}
-
-.form-section {
-  background: rgba(255, 255, 255, .95);
-  border-radius: 16rpx;
-  padding: 30rpx;
-  margin-bottom: 30rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, .1)
-}
-
-.section-title {
-  display: block;
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 24rpx
-}
-
-.form-item {
-  margin-bottom: 20rpx
-}
-
-.form-item:last-child {
-  margin-bottom: 0
-}
-
-.label {
-  display: block;
-  font-size: 28rpx;
-  color: #666;
-  margin-bottom: 12rpx
-}
-
-.input {
-  height: 80rpx;
-  background: #F5F5F5;
-  border-radius: 12rpx;
-  padding: 0 20rpx
-}
-
-.options {
-  display: flex;
-  gap: 16rpx
-}
-
-.option-btn {
-  flex: 1;
-  min-width: 140rpx;
-  height: 80rpx;
-  background: #F5F5F5;
-  border-radius: 12rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center
-}
-
-.option-btn.active {
-  background: #2E7D32;
-  color: #fff
-}
-
-.switch-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between
-}
-
-.bottom-bar {
-  position: sticky;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 20rpx 40rpx 40rpx;
-  background: linear-gradient(180deg, rgba(66, 66, 66, 0), rgba(66, 66, 66, 0.6))
-}
-
-.primary-btn {
-  width: 100%;
-  height: 88rpx;
-  background: #2E7D32;
-  color: #fff;
-  border-radius: 16rpx;
-  font-size: 32rpx
-}
+.container{min-height:100vh;background:#424242;position:relative}
+.header{text-align:center;padding:80rpx 0 40rpx;position:relative;z-index:1}
+.title{display:block;font-size:52rpx;font-weight:bold;color:#FFF;margin-bottom:12rpx;text-shadow:0 2px 4px rgba(0,0,0,.3)}
+.subtitle{display:block;font-size:26rpx;color:rgba(255,255,255,.8);line-height:1.4}
+.form-container{padding:0 40rpx;position:relative;z-index:1}
+.form-section{background:rgba(255,255,255,.95);border-radius:16rpx;padding:30rpx;margin-bottom:30rpx;box-shadow:0 4rpx 16rpx rgba(0,0,0,.1)}
+.section-title{display:block;font-size:32rpx;font-weight:bold;color:#333;margin-bottom:24rpx}
+.form-item{margin-bottom:20rpx}
+.form-item:last-child{margin-bottom:0}
+.label{display:block;font-size:28rpx;color:#666;margin-bottom:12rpx}
+.input{height:80rpx;background:#F5F5F5;border-radius:12rpx;padding:0 20rpx}
+.options{display:flex;gap:16rpx}
+.option-btn{flex:1;min-width:140rpx;height:80rpx;background:#F5F5F5;border-radius:12rpx;display:flex;align-items:center;justify-content:center}
+.option-btn.active{background:#2E7D32;color:#fff}
+.switch-item{display:flex;align-items:center;justify-content:space-between}
+.bottom-bar{position:sticky;bottom:0;left:0;right:0;padding:20rpx 40rpx 40rpx;background:linear-gradient(180deg,rgba(66,66,66,0),rgba(66,66,66,0.6))}
+.primary-btn{width:100%;height:88rpx;background:#2E7D32;color:#fff;border-radius:16rpx;font-size:32rpx}
 
 /* 骨架屏与淡入 */
-.skeleton-container {
-  padding: 40rpx
-}
-
-.skeleton-header {
-  margin-bottom: 20rpx
-}
-
-.skeleton-title, .skeleton-subtitle, .skeleton-card {
-  background: rgba(255, 255, 255, .2);
-  border-radius: 12rpx
-}
-
-.skeleton-title {
-  height: 48rpx;
-  width: 60%;
-  margin-bottom: 12rpx
-}
-
-.skeleton-subtitle {
-  height: 28rpx;
-  width: 40%
-}
-
-.skeleton-card {
-  height: 120rpx;
-  margin-top: 16rpx
-}
-
-.fade-in {
-  animation: fadeIn .3s ease-in
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(6rpx)
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0)
-  }
-}
+.skeleton-container{padding:40rpx}
+.skeleton-header{margin-bottom:20rpx}
+.skeleton-title,.skeleton-subtitle,.skeleton-card{background:rgba(255,255,255,.2);border-radius:12rpx}
+.skeleton-title{height:48rpx;width:60%;margin-bottom:12rpx}
+.skeleton-subtitle{height:28rpx;width:40%}
+.skeleton-card{height:120rpx;margin-top:16rpx}
+.fade-in{animation:fadeIn .3s ease-in}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6rpx)}to{opacity:1;transform:translateY(0)}}
 </style>

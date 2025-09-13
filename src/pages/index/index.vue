@@ -23,7 +23,7 @@
         </view>
       </view>
     </view>
-
+    
     <!-- 实际内容 -->
     <view v-else class="content-container">
       <!-- 背景动画 -->
@@ -32,13 +32,13 @@
         <view class="ball ball-2"></view>
         <view class="ball ball-3"></view>
       </view>
-
+      
       <!-- 标题区域 -->
       <view class="header">
         <text class="main-title">台球计分</text>
         <text class="sub-title">专业计分，精准记录</text>
       </view>
-
+      
       <!-- 游戏模式选择 -->
       <view class="mode-container">
         <view class="mode-card eight-ball" @tap="selectEightBall">
@@ -51,7 +51,7 @@
           </view>
           <view class="card-arrow">›</view>
         </view>
-
+        
         <view class="mode-card nine-ball" @tap="selectNineBall">
           <view class="card-icon">
             <text class="ball-number">9</text>
@@ -73,7 +73,7 @@
           <view class="card-arrow">›</view>
         </view>
       </view>
-
+      
       <!-- 底部信息 -->
       <view class="footer">
         <text class="version">v1.0.0</text>
@@ -95,7 +95,7 @@ export default {
   onLoad() {
     // 监控主页加载性能
     this.pageLoadMonitor = performanceMonitor.monitorPageLoad('主页')
-
+    
     // 预加载关键资源
     this.preloadResources()
   },
@@ -246,6 +246,7 @@ export default {
 }
 
 
+
 .eight-ball {
   border-left: 8rpx solid #C62828;
 }
@@ -253,11 +254,9 @@ export default {
 .nine-ball {
   border-left: 8rpx solid #1565C0;
 }
-
 .snooker {
   border-left: 8rpx solid #2E7D32;
 }
-
 .snooker .card-icon {
   background: #2E7D32;
 }
